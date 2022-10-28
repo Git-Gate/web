@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { motion, Variants } from "framer-motion"
+import {motion, Variants} from "framer-motion";
 
 export default function Home() {
 
@@ -14,13 +14,13 @@ export default function Home() {
         viewport={{ once: true }}
         className="max-w-4xl flex flex-col items-center justify-center py-16 space-y-8 h-screen px-8 md:px-4 z-20 relative"
       >
-        <motion.img 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 1, delay: 0.5 }}
+        <motion.img
+          initial={{opacity: 0}}
+          animate={{opacity: 0.4}}
+          transition={{duration: 1, delay: 0.5}}
           className="absolute z-10 skew-y-3 motion-safe:animate-wiggle"
-          src="/ethereum.png" 
-          viewport={{ once: true }}
+          src="/ethereum.png"
+          viewport={{once: true}}
         />
         <h1 className="text-4xl md:text-6xl text-center font-extrabold z-20">
           <p>The home for</p>
@@ -33,7 +33,6 @@ export default function Home() {
           Start exploring
         </a>
       </motion.div>
-      
     </div>
-  )
+  );
 }
