@@ -1,7 +1,7 @@
 import {CryptoHelper} from "../../../lib/crypto";
 import {UnauthorizedException} from "next-api-decorators";
-import {User} from "../../../interfaces/user";
-import {UserModel} from "../../../models/user";
+import {User} from "../../../lib/db/interfaces/user";
+import {UserModel} from "../../../lib/db/models/user";
 
 export const getUserAuthToken = (
     userId: string,
