@@ -20,11 +20,11 @@ export default function Navbar() {
         if (!isOpen) open();
     }
 
-    // useEffect(() => {
-    //     if (isReady) {
-    //         signUp();
-    //     }
-    // }, [isReady])
+     useEffect(() => {
+         if (isReady) {
+             signUp();
+         }
+    }, [isReady])
 
     const signUp = async () => {
         try {

@@ -1,5 +1,7 @@
+import {ObjectId} from "mongoose";
+
 export interface Base {
-    _id: string;
-    createdAt: number;
-    updatedAt: number;
+  _id: ObjectId;
+  createdAt: number;
+  updatedAt: number;
 }
