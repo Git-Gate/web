@@ -1,4 +1,4 @@
-import dbConnect from '../../../lib/db'
+import {connect} from '../../../lib/db'
 import {UserModel} from '../../../lib/db/models/user'
 import {Body, createHandler, Post, Req, UnauthorizedException, ValidationPipe} from "next-api-decorators";
 import {IsNotEmpty, IsString} from "class-validator";
@@ -31,8 +31,7 @@ class GithubHandler {
         if (!userAuthenticationFromWebFlow.token) {
             throw new UnauthorizedException("Invalid code")
         }
-        await dbConnect()
-
+        await connect();
 
         const user = req.user;
         const githubClient = new GithubClient(userAuthenticationFromWebFlow.token);
