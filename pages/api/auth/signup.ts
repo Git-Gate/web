@@ -50,7 +50,9 @@ class SignupHandler {
                 process.env.INFURA_ID
             );
             const ensLabel = await serverWeb3.lookupAddress(address);
-            user = await UserModel.create({address: address.toLowerCase(), ensLabel});
+            //user = await UserModel.create({address: address.toLowerCase(), ensLabel});
+            user = new UserModel({ address: address.toLowerCase(), ensLabel });
+            await user.save();
             isNewUser = true;
         }
         const token = getUserAuthToken(user._id)
