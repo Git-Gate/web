@@ -5,6 +5,9 @@ import { Space_Grotesk } from '@next/font/google'
 import { chains, providers } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import Navbar from '../components/navbar'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+
 
 if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
   throw new Error('You need to provide NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID env variable')
@@ -41,6 +44,7 @@ export default function RootLayout({
         <div className='h-full'>
           <Navbar />
           {children}
+          <ToastContainer />
           <Web3Modal config={walletConnectConfig} />
         </div>
       </body>

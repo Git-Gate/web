@@ -77,31 +77,6 @@ export default function Home() {
         <h2 className="text-2xl text-center text-gray-400 max-w-2xl">
           Made easy for everyone.
         </h2>
-        <motion.div
-          initial="offscreen"
-          whileInView="onscreen"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl"
-        >
-          <motion.div 
-            className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" 
-            variants={cardVariants(0)}
-          >
-            <img src="/repo.png" />
-            <h4 className="text-lg font-bold">Manage your repos</h4>
-            <p className="text-gray-400">View your Github repositories and decentralize them.</p>
-          </motion.div>
-          <motion.div className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" variants={cardVariants(0.4)}>
-            <img src="/gate.png" />
-            <h4 className="text-lg font-bold">Restrict their access</h4>
-            <p className="text-gray-400">Give access only to members who own specific tokens.</p>
-          </motion.div>
-          <motion.div className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" variants={cardVariants(0.8)}>
-            <img src="/reward.png" />
-            <h4 className="text-lg font-bold">Reward your contributors</h4>
-            <p className="text-gray-400">Contributors obtain soulbound tokens for their work.</p>
-          </motion.div>
-        </motion.div>
       </div>
       <div 
         className="bg-black text-white w-full flex flex-col items-center justify-center py-16 space-y-2 h-screen px-4 z-20"
@@ -132,31 +107,7 @@ export default function Home() {
           className="text-2xl text-center text-gray-400 max-w-2xl">
           Made easy for everyone.
         </motion.h2>
-        <motion.div
-          initial="offscreen"
-          whileInView="onscreen"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl"
-        >
-          <motion.div 
-            className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" 
-            variants={cardVariants(0)}
-          >
-            <img src="/repo.png" />
-            <h4 className="text-lg font-bold">Manage your repos</h4>
-            <p className="text-gray-400">View your Github repositories and decentralize them.</p>
-          </motion.div>
-          <motion.div className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" variants={cardVariants(0.4)}>
-            <img src="/gate.png" />
-            <h4 className="text-lg font-bold">Restrict their access</h4>
-            <p className="text-gray-400">Give access only to members who own specific tokens.</p>
-          </motion.div>
-          <motion.div className="border border-gray-100 shadow-md rounded-lg p-4 flex flex-col items-center justify-center space-y-2 text-center" variants={cardVariants(0.8)}>
-            <img src="/reward.png" />
-            <h4 className="text-lg font-bold">Reward your contributors</h4>
-            <p className="text-gray-400">Contributors obtain soulbound tokens for their work.</p>
-          </motion.div>
-        </motion.div>
+
       </div>
     </div>
   )
