@@ -1,19 +1,44 @@
 'use client'
 
-import { Web3Button, useConnectModal, useAccount } from '@web3modal/react'
+import { Web3Button, useConnectModal, useAccount, useSignMessage } from '@web3modal/react'
 import { } from '@web3modal/ethereum'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { shortenHex } from '../utils'
 import Link from 'next/link'
 import SearchModal from './searchModal'
+import axios from 'axios';
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
     const { isOpen, open, close } = useConnectModal()
     const { account, isReady } = useAccount()
     const [showSearch, setShowSearch] = useState(false)
+    const { data, error, isLoading, signMessage } = useSignMessage({ message: '' });
+    const { push } = useRouter();
 
     const connectWallet = () => {
         if (!isOpen) open();
+    }
+
+    useEffect(() => {
+        if (isReady) {
+            signUp();
+        }
+    }, [isReady])
+
+    const signUp = async () => {
+        try {
+            const nonceRes = await axios.get('/api/auth/nonce');
+            const { nonce, message } = nonceRes.data;
+            const signature = await signMessage({ message });
+            const signUpRes = await axios.post('/api/auth/signup', { address: account.address, signature, nonce }, { headers: { 'Content-Type': 'application/json' }});
+            const { token, isNewUser } = signUpRes.data;
+            if (isNewUser) {
+                push(`/connect/${account.address}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -30,7 +55,7 @@ export default function Navbar() {
                 <div className='hidden space-x-4 items-center md:flex'>
                     {
                         isReady ? 
-                        <Link href={`/connect/${account.address}`}>
+                        <Link href={`/profile/${account.address}`}>
                             <div className='bg-white text-black select-none px-4 py-2 cursor-pointer rounded-md transition-transform hover:scale-105'>
                                 { shortenHex(account.address) }
                             </div>
