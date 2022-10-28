@@ -51,12 +51,11 @@ class GithubHandler {
       {_id: user._id},
       {
         $set: {
+          bio: githubUser.bio,
+          avatarUrl: githubUser.avatar_url,
           githubName: githubUser.name,
           githubLogin: githubUser.login,
-          bio: githubUser.bio,
-          githubId: githubUser.id,
           githubToken, // TODO: encrypt
-          avatarUrl: githubUser.avatar_url,
         },
       }
     );
