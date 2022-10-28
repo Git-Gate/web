@@ -1,9 +1,6 @@
-import {connect} from "../../../lib/db";
-import {UserModel} from "../../../lib/db/models/user";
 import {recoverPersonalSignature} from "@metamask/eth-sig-util";
 import {bufferToHex} from "ethereumjs-util";
 import {ethers} from "ethers";
-import {getUserAuthToken} from "./utils";
 import {
   Body,
   createHandler,
@@ -11,12 +8,10 @@ import {
   UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
-import {
-  IsEthereumAddress,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from "class-validator";
+import {IsEthereumAddress, IsNotEmpty, IsString} from "class-validator";
+import {getUserAuthToken} from "./utils";
+import {UserModel} from "../../../lib/db/models/user";
+import {connect} from "../../../lib/db";
 
 export class SignupDTO {
   @IsEthereumAddress()

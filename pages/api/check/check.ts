@@ -1,14 +1,12 @@
-import {createHandler, Get} from 'next-api-decorators';
-import {JwtAuthGuard} from "../../../lib/middlewares";
+import {createHandler, Get} from "next-api-decorators";
 
 class CheckHandler {
-    @Get('/')
-    @JwtAuthGuard()
-    public async check() {
-        return {
-            message: "OK"
-        };
-    }
+  @Get("/")
+  public async check() {
+    return {
+      message: "OK",
+    };
+  }
 }
 
 export default createHandler(CheckHandler);
