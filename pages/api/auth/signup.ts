@@ -19,17 +19,14 @@ import {
 } from "class-validator";
 
 export class SignupDTO {
-  @IsNotEmpty()
   @IsEthereumAddress()
-  public address!: string;
+  address!: string;
 
-  @IsNotEmpty()
   @IsString()
-  public signature!: string;
+  signature!: string;
 
-  @IsNumber()
   @IsNotEmpty()
-  public nonce!: number;
+  nonce!: number;
 }
 
 class SignupHandler {
