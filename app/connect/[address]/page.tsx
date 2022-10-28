@@ -9,7 +9,9 @@ import LoginGithub from 'react-login-github';
 import { shortenHex } from '../../../utils';
 import { toast } from "react-toastify";
 
-export default function Connect({ params }: { params: { address: string }}) {
+//{ params }: { params: { address: string }}
+
+export default function Connect() {
     const { account, isReady } = useAccount();
     const [open, setOpen] = useState(false);
     const router = useRouter();

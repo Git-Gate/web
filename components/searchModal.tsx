@@ -56,7 +56,7 @@ export default function SearchModal({ open, setOpen }: { open: boolean, setOpen:
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-25 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">

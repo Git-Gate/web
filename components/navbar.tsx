@@ -21,7 +21,7 @@ export default function Navbar() {
     }
 
     // useEffect(() => {
-    //     if (isReady) {
+    //     if (isReady && account.address) {
     //         signUp();
     //     }
     // }, [isReady])
@@ -35,6 +35,8 @@ export default function Navbar() {
             const { token, isNewUser } = signUpRes.data;
             if (isNewUser) {
                 push(`/connect/${account.address}`);
+            } else {
+                push(`/profile/${account.address}`)
             }
         } catch (error) {
             console.error(error);
@@ -42,7 +44,7 @@ export default function Navbar() {
     }
 
     return (
-        <div className="absolute top-0 left-0 w-full py-4 px-8 bg-accent bg-transparent z-20">
+        <div className="fixed top-0 left-0 w-full py-4 px-8 bg-accent bg-transparent z-20">
             <div className="flex justify-between items-center">
                 <div className='flex items-end space-x-8'>
                     <Link href={"/"}>
@@ -52,7 +54,7 @@ export default function Navbar() {
                         <h5 className='text-md cursor-pointer hover:underline' onClick={() => setShowSearch(true)}>Search</h5>
                     </div>
                 </div>
-                <div className='hidden space-x-4 items-center md:flex'>
+                <div className='flex space-x-4 items-center'>
                     {
                         (isReady && account.address) ? 
                         <Link href={`/profile/${account.address}`}>
@@ -65,9 +67,6 @@ export default function Navbar() {
                             { isOpen ? <span className='motion-safe:animate-pulse'>Connecting</span> : 'Connect'}
                         </div>
                     }
-                </div>
-                <div className='flex md:hidden'>
-                    
                 </div>
             </div>
             <SearchModal open={showSearch} setOpen={setShowSearch} />
