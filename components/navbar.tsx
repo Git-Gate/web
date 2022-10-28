@@ -20,11 +20,11 @@ export default function Navbar() {
         if (!isOpen) open();
     }
 
-    useEffect(() => {
-        if (isReady) {
-            signUp();
-        }
-    }, [isReady])
+    // useEffect(() => {
+    //     if (isReady) {
+    //         signUp();
+    //     }
+    // }, [isReady])
 
     const signUp = async () => {
         try {
@@ -54,7 +54,7 @@ export default function Navbar() {
                 </div>
                 <div className='hidden space-x-4 items-center md:flex'>
                     {
-                        isReady ? 
+                        (isReady && account.address) ? 
                         <Link href={`/profile/${account.address}`}>
                             <div className='bg-white text-black select-none px-4 py-2 cursor-pointer rounded-md transition-transform hover:scale-105'>
                                 { shortenHex(account.address) }
