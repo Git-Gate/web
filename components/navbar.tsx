@@ -28,21 +28,24 @@ export default function Navbar() {
 
   const signUp = async () => {
     try {
-      const nonceRes = await axios.get("/api/auth/nonce");
-      const {nonce, message} = nonceRes.data;
-      const signature = await signMessage({message});
-      const signUpRes = await axios.post(
-        "/api/auth/signup",
-        {
-          address: account.address,
-          signature,
-          nonce,
-        },
-        {headers: {"Content-Type": "application/json"}}
-      );
-      const {token, isNewUser} = signUpRes.data;
-      if (isNewUser) {
-        push(`/connect/${account.address}`);
+      if (typeof window !== undefined && !localStorage.getItem('gitgate_token')) {
+        const nonceRes = await axios.get("/api/auth/nonce");
+        const {nonce, message} = nonceRes.data;
+        const signature = await signMessage({message});
+        const signUpRes = await axios.post(
+          "/api/auth/signup",
+          {
+            address: account.address,
+            signature,
+            nonce,
+          },
+          {headers: {"Content-Type": "application/json"}}
+        );
+        const {token, isNewUser} = signUpRes.data;
+        localStorage.setItem('gitgate_token', token);
+        if (isNewUser) {
+          push(`/connect/${account.address}`);
+        }
       }
     } catch (error) {
       console.error(error);

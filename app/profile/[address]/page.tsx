@@ -88,8 +88,8 @@ export default function Profile({ params }: { params: { address: string }}) {
                         </div>
                     }
                     {
-                        repositories.map((repository) => {
-                            return <>
+                        repositories.map((repository, index) => {
+                            return <div key={index}>
                                     <div className='flex flex-col text-white space-y-4'>
                                     <div className='flex flex-col space-y-2'>
                                         <h3 className='font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline'>{ repository.name }</h3>
@@ -106,7 +106,7 @@ export default function Profile({ params }: { params: { address: string }}) {
                                     </div>
                                 </div>
                                 <hr className='my-4' />
-                            </>
+                            </div>
                         })
                     }
                 </div>
