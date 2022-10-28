@@ -13,6 +13,7 @@ import {JwtAuthGuard} from "../../../lib/middlewares";
 import {UserModel} from "../../../lib/db/models/user";
 import {connect} from "../../../lib/db";
 import {GithubClient} from "../../../lib/github-client";
+import {User} from "../../../lib/db/interfaces/user";
 
 export class GithubDTO {
   @IsString()
@@ -42,7 +43,7 @@ class GithubHandler {
     }
     await connect();
 
-    const user = req.user;
+    const user = req.user as User;
     const githubToken = userAuthenticationFromWebFlow.token;
     const githubClient = new GithubClient(userAuthenticationFromWebFlow.token);
     const githubUser = await githubClient.getAuthenticatedUser();
@@ -50,7 +51,9 @@ class GithubHandler {
       {_id: user._id},
       {
         $set: {
-          githubUsername: githubUser.name,
+          githubName: githubUser.name,
+          githubLogin: githubUser.login,
+          bio: githubUser.bio,
           githubId: githubUser.id,
           githubToken, // TODO: encrypt
           avatarUrl: githubUser.avatar_url,
