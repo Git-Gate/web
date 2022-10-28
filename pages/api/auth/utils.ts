@@ -1,8 +1,8 @@
-import {CryptoHelper} from "../../../lib/crypto";
 import {UnauthorizedException} from "next-api-decorators";
+import mongoose from "mongoose";
+import {CryptoHelper} from "../../../lib/crypto";
 import {User} from "../../../lib/db/interfaces/user";
 import {UserModel} from "../../../lib/db/models/user";
-import mongoose, {connection} from "mongoose";
 import {connect} from "../../../lib/db";
 
 export const getUserAuthToken = (

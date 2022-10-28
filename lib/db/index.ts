@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export async function connect(): Promise<void> {
-  if (mongoose.connection) {
+  if (mongoose?.connection?.db) {
     return;
   }
   await mongoose.connect(

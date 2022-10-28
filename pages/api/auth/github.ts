@@ -1,5 +1,3 @@
-import {connect} from "../../../lib/db";
-import {UserModel} from "../../../lib/db/models/user";
 import {
   Body,
   createHandler,
@@ -8,10 +6,12 @@ import {
   UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
-import {IsEmpty, IsString} from "class-validator";
+import {IsString} from "class-validator";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
-import {JwtAuthGuard} from "../../../lib/middlewares";
 import type {NextApiRequest} from "next";
+import {JwtAuthGuard} from "../../../lib/middlewares";
+import {UserModel} from "../../../lib/db/models/user";
+import {connect} from "../../../lib/db";
 import {GithubClient} from "../../../lib/github-client";
 
 export class GithubDTO {
@@ -47,10 +47,11 @@ class GithubHandler {
     const githubClient = new GithubClient(userAuthenticationFromWebFlow.token);
     const githubUser = await githubClient.getAuthenticatedUser();
     await UserModel.updateOne(
-      {_id: user!._id},
+      {_id: user._id},
       {
         $set: {
           githubUsername: githubUser.name,
+          githubId: githubUser.id,
           githubToken, // TODO: encrypt
           avatarUrl: githubUser.avatar_url,
         },

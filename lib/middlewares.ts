@@ -5,7 +5,6 @@ import {
 } from "next-api-decorators";
 import {NextApiRequest, NextApiResponse} from "next";
 import {verifyTokenAndGetUser} from "../pages/api/auth/utils";
-import mongoose from "mongoose";
 
 export const JwtAuthGuard = createMiddlewareDecorator(
   async (req: NextApiRequest, res: NextApiResponse, next: NextFunction) => {
