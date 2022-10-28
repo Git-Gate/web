@@ -6,10 +6,10 @@ const userSchema = new Schema(
     address: String,
     ensLabel: String,
     avatarUrl: String,
+    bio: String,
     githubName: String,
     githubLogin: String,
     githubToken: String,
-    bio: String,
   },
   {collection: "users"}
 );
