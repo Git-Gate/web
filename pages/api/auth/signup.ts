@@ -43,17 +43,18 @@ class SignupHandler {
         }
 
         let user = await UserModel.findOne({address: address.toLowerCase()});
-
+        let isNewUser = false;
         if (!user) {
             const serverWeb3 = new ethers.providers.InfuraProvider(
                 undefined,
                 process.env.INFURA_ID
             );
             const ensLabel = await serverWeb3.lookupAddress(address);
-            user = await UserModel.create({address: address.toLowerCase(), ensLabel})
+            user = await UserModel.create({address: address.toLowerCase(), ensLabel});
+            isNewUser = true;
         }
         const token = getUserAuthToken(user._id)
-        return {token}
+        return {token, isNewUser};
     }
 }
 
