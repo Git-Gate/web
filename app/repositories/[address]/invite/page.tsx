@@ -3,12 +3,14 @@
 import {useAccount, useConnectModal} from "@web3modal/react";
 import axios from "axios";
 import Link from "next/link";
+import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import LoginGithub from "react-login-github";
 import {toast} from "react-toastify";
 
 export default function InviteRepoPage({params}: {params: {address: string}}) {
   const {account, isReady} = useAccount();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<number>(0);
   const [success, setSuccess] = useState(false);
   const {isOpen, open} = useConnectModal();
@@ -22,6 +24,11 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
       setStep(1);
     }
   }, [account]);
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) onGithubLoginSuccess({code});
+  }, [searchParams]);
 
   const getRepo = async () => {
     const repoRes = await axios.get(`/api/repositories/${params.address}`);
@@ -148,6 +155,10 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               onSuccess={(response: any) => onGithubLoginSuccess(response)}
               onError={(response: any) => console.error(response)}
               clientId="3cab64e37e3e051e028a"
+              redirectUri={
+                typeof window !== "undefined" &&
+                `https://web-gitgate.vercel.app/repositories/${repo._id}/invite`
+              }
               scope="user"
             >
               <button className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
