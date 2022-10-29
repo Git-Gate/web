@@ -4,6 +4,7 @@ import { CogIcon, PlusIcon, UserGroupIcon } from '@heroicons/react/20/solid';
 import { useAccount } from '@web3modal/react';
 import axios from 'axios';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { shortenHex } from '../../../utils';
@@ -56,8 +57,6 @@ export default function Profile({ params }: { params: { address: string }}) {
             setLoading(false);
         } 
     }
-
-
 
     if (loading || !user) {
         return (
@@ -140,7 +139,9 @@ export default function Profile({ params }: { params: { address: string }}) {
                             return <div key={index}>
                                     <div className='flex flex-col text-white space-y-4'>
                                     <div className='flex flex-col space-y-2'>
-                                        <h3 className='font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline'>{ repository.name }</h3>
+                                        <Link href={`/repositories/${repository._id}`}>
+                                            <h3 className='font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline'>{ repository.name }</h3>
+                                        </Link>
                                         <h4 className='text-lg text-gray-200'>{ repository.description }</h4>
                                     </div>
                                     <div className='flex space-x-2'>

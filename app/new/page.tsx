@@ -108,10 +108,6 @@ export default function NewRepository() {
             signedMessage: '',
         };
         try {
-            const client = new NFTStorage({ token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY as string });
-            const someData = new File([ getSvg(apiData.repositoryName) ], `${apiData.repositoryName}_${apiData.repositoryOwner}.svg`, { type: 'image/svg' })
-            const cid = await client.storeBlob(someData);
-            apiData.cid = cid;
             const signedMessage = await signMessage({ message: `${selectedRepo.id}_${account.address}`});
             apiData.messageHash = ethers.utils.keccak256(toUtf8Bytes(`${selectedRepo.id}_${account.address}`));
             apiData.signedMessage = signedMessage;

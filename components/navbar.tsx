@@ -87,7 +87,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className={`absolute top-0 left-0  py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
+    <div className={`fixed top-0 left-0 w-full py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
       <div className="flex justify-between items-center">
         <div className="flex items-end space-x-8">
           <Link href={"/"}>
