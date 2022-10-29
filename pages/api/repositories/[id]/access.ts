@@ -54,7 +54,8 @@ class RepositoryAccessHandler {
     }
     const app = new App({
       appId: process.env.GITGATE_GITHUB_APP_ID as string,
-      privateKey: process.env.GITGATE_GITHUB_APP_PVT_KEY as string,
+      privateKey: JSON.parse(process.env.GITGATE_GITHUB_APP_PVT_KEY as string)
+        .privateKey as string,
       oauth: {
         clientId: process.env.GITGATE_GITHUB_APP_CLIENT_ID as string,
         clientSecret: process.env.GITGATE_GITHUB_APP_CLIENT_SECRET as string,
