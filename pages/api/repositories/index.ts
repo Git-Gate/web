@@ -91,7 +91,6 @@ class CreateTokenizedRepositoryHandler {
     }
 
     const user = req.user as User;
-
     const githubClient = new GithubClient(user.githubToken as string);
     const repo = await githubClient.getRepository(
       repositoryOwner,
@@ -102,30 +101,28 @@ class CreateTokenizedRepositoryHandler {
       description: repo.description,
       githubUrl: repo.url,
       githubId: repo.id,
-      userId: user._id,
-      owner: user.address,
+      ownerAddress: user.address,
+      memberAddresses: [user.address],
       requirements,
       blacklistedAddresses,
     });
   }
 
   @Get()
-  @JwtAuthGuard()
   public async getList(
     @Req() req: NextApiRequest,
-    @Query("owner") owner: string,
+    @Query("ownerAddress") ownerAddress: string,
     @Query("name") name: string,
-    @Query("userId") userId: string,
+    @Query("memberAddress") memberAddress: string,
     @Query("page") page: number,
     @Query("limit") limit: number
   ) {
-    const user = req.user as User;
     const findObj: any = {};
-    if (owner) {
-      findObj["owner"] = owner;
+    if (ownerAddress) {
+      findObj["ownerAddress"] = ownerAddress.toLowerCase();
     }
-    if (userId) {
-      findObj["userId"] = user._id;
+    if (memberAddress) {
+      findObj["memberAddresses"] = memberAddress.toLowerCase();
     }
     if (name) {
       findObj["name"] = {
