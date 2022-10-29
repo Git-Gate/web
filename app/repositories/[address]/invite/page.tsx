@@ -52,7 +52,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
       setSuccess(false);
     } finally {
       setELoading(false);
-      setStep(2);
+      setStep(3);
     }
   };
 
@@ -83,7 +83,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
           progress: undefined,
           theme: "dark",
         });
-        setStep(3);
+        setStep(2);
         setSuccess(true);
       }
     }
@@ -120,7 +120,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
             </button>
           </div>
         );
-      case 1:
+      case 2:
         return (
           <div className="flex flex-col items-center space-y-4">
             <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
@@ -138,15 +138,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
             </button>
           </div>
         );
-      case 2:
-        if (!success) {
-          return (
-            <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
-              Your wallet does not satistfy the token requirements set by the
-              repo owner
-            </h2>
-          );
-        }
+      case 1:
         return (
           <div className="flex flex-col items-center space-y-4">
             <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
@@ -165,6 +157,14 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
           </div>
         );
       default:
+        if (!success) {
+          return (
+            <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
+              Your wallet does not satistfy the token requirements set by the
+              repo owner
+            </h2>
+          );
+        }
         return (
           <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
             🎉 Yay! You did it! 🎉
