@@ -8,6 +8,7 @@ import { ClipboardIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
 import NewRequirementSlide from "../../components/newRequirementSlide";
+import { toast } from "react-toastify";
 
 function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
@@ -19,7 +20,8 @@ export default function NewRepository() {
     const [open, setOpen] = useState(false);
     const [repos, setRepos] = useState<any[]>([]);
     const [success, setSuccess] = useState(false);
-    const [tokenGroups, setTokenGroups] = useState([
+    const [blacklistedAddresses, setBlacklistedAddresses] = useState('');
+    const [tokenGroups, setTokenGroups] = useState<any[]>([
         {
           type: 'ERC-20',
           tokens: [],
@@ -49,9 +51,8 @@ export default function NewRepository() {
 
     const getRepos = async () => {
         if (typeof window !== 'undefined' && localStorage.getItem('gitgate_token')) {
-            // const reposRes = await axios.get('/api/github/repositories', { headers: { 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}`}})
-            // setRepos(reposRes.data);
-            setRepos([{ id: 435812842, name: "honeypot-sniper" }])
+            const reposRes = await axios.get('/api/github/repositories', { headers: { 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}`}})
+            setRepos(reposRes.data);
         }
     }
 
@@ -72,6 +73,48 @@ export default function NewRepository() {
             }
             return tokenGroup;
         }))
+    }
+
+    const createRepo = async () => {
+        // TODO: change this
+        const requirements = [];
+        for (let i = 0; i < tokenGroups.length; i++) {
+            for (let j = 0; j < tokenGroups[i].tokens.length; j++) {
+                requirements.push({
+                    type: tokenGroups[i].type.toLowerCase(),
+                    address: tokenGroups[i].tokens[j].address,
+                    amount: parseInt(tokenGroups[i].tokens[j].amount) || 1,
+                    ids: tokenGroups[i].tokens[j].ids.filter(String).map((id: string) => parseInt(id)) || [],
+                });
+            }
+        }
+        const data: any = {
+            repositoryId: selectedRepo.id,
+            repositoryName: selectedRepo.name,
+            repositoryOwner: selectedRepo.owner.login,
+            requirements,
+            blacklistedAddresses: blacklistedAddresses.split(','),
+        };
+        try {
+            const createRepoRes = await axios.post(
+                `/api/repositories`,
+                data,
+                { headers: { 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}`, 'Content-Type': 'application/json'}}
+            );
+            setSuccess(true);
+        } catch (error) {
+            console.error(error);
+            toast.error("Error while creating repo.", {
+                position: "top-right",
+                autoClose: 2500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
     }
 
     if (success) {
@@ -188,15 +231,15 @@ export default function NewRepository() {
                             name="blacklistedAddresses"
                             rows={5}
                             className="block w-full md:w-2/3 rounded-md text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            
-                            
+                            onChange={(event) => setBlacklistedAddresses(event.target.value)}
+                            value={blacklistedAddresses}
                         />
                         </div>
 
                     </div>
                     <div className="mt-4 md:mt-0 md:ml-8 md:flex-none">
                         <button
-                            onClick={() => setSuccess(true)}
+                            onClick={() => createRepo()}
                             type="button"
                             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
                         >

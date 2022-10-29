@@ -35,21 +35,27 @@ export default function Profile({ params }: { params: { address: string }}) {
     const { account } = useAccount();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const [repositories, setRepositories] = useState<any[]>([]);
 
     useEffect(() => {
-        getUser();
-    }, []);
+        if (account.address && !user) getUser();
+    }, [account]);
 
     const getUser = async () => {
         try {
             const userRes = await axios.get(`/api/users/${params.address}`);
             setUser(userRes.data);
+            setIsOwnProfile(userRes.data.address.toLowerCase() === account.address.toLowerCase());
+            const repositoriesRes = await axios.get(`/api/repositories?memberAddress=${userRes.data.address}`);
+            console.log(repositoriesRes.data);
+            //setRepositories(repositoriesRes.data);
             setLoading(false);
         } catch (error) {
             console.error(error);
             push('/not-found');
             setLoading(false);
-        }
+        } 
     }
 
 
@@ -84,7 +90,7 @@ export default function Profile({ params }: { params: { address: string }}) {
             <div className="w-full ml-auto md:w-8/12">
                 <div className="flex flex-col h-screen bg-indigo-500 py-36 px-8 text-black">
                     <h2 className="mb-5 text-4xl font-bold">
-                        { (account && account.address.toLowerCase() === user.address) ? 'Your tokenized repositories' : 'Tokenized repositories'}
+                        { isOwnProfile ? 'Your tokenized repositories' : 'Tokenized repositories'}
                     </h2>
                     <div className='flex justify-between space-x-4'>
                         <input 
@@ -92,7 +98,7 @@ export default function Profile({ params }: { params: { address: string }}) {
                             className="bg-white text-black select-none px-4 py-2 rounded-md ring-black focus:ring-2 w-full md:w-1/3 border-black border-2"
                             placeholder='Search...' 
                         />
-                        { (account && account.address.toLowerCase() === user.address) && <div className='flex space-x-4 items-center bg-black text-sm font-medium shadow-sm text-white select-none px-4 py-2 cursor-pointer rounded-md transition-transform hover:scale-105' onClick={() => push('/new')}>
+                        { isOwnProfile && <div className='flex space-x-4 items-center bg-black text-sm font-medium shadow-sm text-white select-none px-4 py-2 cursor-pointer rounded-md transition-transform hover:scale-105' onClick={() => push('/new')}>
                             <PlusIcon height={24} width={24} color={'#ffffff'} />
                             <span>New</span>
                         </div> }
@@ -101,7 +107,7 @@ export default function Profile({ params }: { params: { address: string }}) {
                     {
                         repositories.length === 0 &&     
                         <div className="text-center mt-8 mx-auto">
-                            { (account && account.address.toLowerCase() === user.address) && <svg
+                            { isOwnProfile && <svg
                             className="mx-auto h-12 w-12 text-white"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -118,7 +124,7 @@ export default function Profile({ params }: { params: { address: string }}) {
                             </svg> }
                             <h3 className="mt-2 text-md font-medium text-white">No repositories found</h3>
                             {
-                                (account && account.address.toLowerCase() === user.address) && <>
+                                isOwnProfile && <>
                                     <p className="mt-1 text-sm text-gray-200">Get started by tokenizing a Github repository.</p>
                                     <div className="mt-6 w-44 mx-auto">
                                         <div className='flex space-x-4 items-center bg-black text-sm font-medium shadow-sm text-white select-none px-4 py-2 cursor-pointer rounded-md transition-transform hover:scale-105' onClick={() => push('/new')}>
