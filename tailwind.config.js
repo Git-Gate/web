@@ -16,5 +16,8 @@ module.exports = {
         wiggle: 'wiggle 3s ease-in-out infinite',
       }
     }
-  }
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+  ]
 }

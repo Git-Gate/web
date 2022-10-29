@@ -16,25 +16,25 @@ export default function Connect() {
 
   const onGithubLoginSuccess = async (response: any) => {
     if (typeof window !== 'undefined' && localStorage.getItem('gitgate_token')) {
-        const { code } = response;
-        const codeRes = await axios.post(
-            '/api/auth/github', 
-            { code }, 
-            { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}` }}
-        );
-        if (codeRes.status === 200) {
-            toast.success("Connection successful!", {
-                position: "top-right",
-                autoClose: 2500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-            push(`/profile/${account.address}`)
-        }
+      const { code } = response;
+      const codeRes = await axios.post(
+          '/api/auth/github', 
+          { code }, 
+          { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}` }}
+      );
+      if (codeRes.status === 200) {
+          toast.success("Connection successful!", {
+              position: "top-right",
+              autoClose: 2500,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+          });
+          push(`/profile/${account.address}`)
+      }
     }
   };
 

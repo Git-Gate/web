@@ -4,41 +4,7 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function RequirementsTable() {
-    const [tokenGroups, setTokenGroups] = useState([
-        {
-          type: 'ERC-20',
-          tokens: [
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '20', ids: [] },
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '50', ids: [] },
-          ],
-        },
-        {
-          type: 'ERC-721',
-          tokens: [
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '20', ids: [1, 2, 3] },
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '50', ids: [4, 5, 6] },
-          ],
-        },
-        {
-          type: 'ERC-1155',
-          tokens: [
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '20', ids: [1, 2, 3] },
-            { address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F', amount: '50', ids: [4, 5, 6] },
-          ],
-        },
-    ]);
-
-    const removeToken = (type: string, idx: number) => {
-        setTokenGroups(tokenGroups.map((tokenGroup: any) => {
-            if (tokenGroup.type === type) {
-                tokenGroup.tokens = tokenGroup.tokens.filter((_: any, tIndex: number) => tIndex !== idx);
-                return tokenGroup;
-            }
-            return tokenGroup;
-        }))
-    }
-
+export default function RequirementsTable({ onClick, tokenGroups, removeToken, }: { onClick: () => void, tokenGroups: any[], removeToken: (type: string, idx: number) => void }) {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
@@ -52,6 +18,7 @@ export default function RequirementsTable() {
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+            onClick={() => onClick()}
           >
             Add requirement
           </button>
@@ -90,7 +57,7 @@ export default function RequirementsTable() {
                           {tokenGroup.type}
                         </th>
                       </tr>
-                      {tokenGroup.tokens.map((token, tokenIdx) => (
+                      {tokenGroup.tokens.map((token: any, tokenIdx: number) => (
                         <tr
                           key={tokenIdx}
                           className={classNames(tokenIdx === 0 ? 'border-gray-300' : 'border-gray-200', 'border-t')}
