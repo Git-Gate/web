@@ -8,19 +8,13 @@ import {
 } from "next-api-decorators";
 import type {NextApiRequest} from "next";
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
-import {createAppAuth} from "@octokit/auth-app";
 import {App} from "@octokit/app";
-import {Octokit} from "@octokit/core";
 import {connect} from "../../../../lib/db";
 import {RepositoryModel} from "../../../../lib/db/models/repository";
 import {User} from "../../../../lib/db/interfaces/user";
 import {JwtAuthGuard} from "../../../../lib/middlewares";
-import {GithubClient} from "../../../../lib/github-client";
 import {Repository} from "../../../../lib/db/interfaces/repository";
-import {
-  soulboundContractAbi,
-  soulboundFactoryContractAbi,
-} from "../../../../lib/smart-contract-abis";
+import {soulboundContractAbi} from "../../../../lib/smart-contract-abis";
 
 class RepositoryAccessHandler {
   @Get()
