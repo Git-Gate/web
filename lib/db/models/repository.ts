@@ -13,6 +13,8 @@ const RepositorySchema = new Schema(
       type: [{type: String, address: String, amount: Number, ids: [Number]}],
     },
     blacklistedAddresses: [String],
+    contractAddress: String,
+    imageIpfsHash: String,
   },
   {collection: "repositories"}
 );

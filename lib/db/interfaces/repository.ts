@@ -9,6 +9,8 @@ export interface Repository extends Base {
   memberAddresses: string[];
   requirements: RepositoryTokenRequirement[];
   blacklistedAddresses: string[];
+  contractAddress?: string;
+  imageIpfsHash?: string;
 }
 
 export interface RepositoryTokenRequirement {

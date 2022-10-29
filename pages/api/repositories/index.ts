@@ -20,12 +20,15 @@ import {
 } from "class-validator";
 import {Type} from "class-transformer";
 import type {NextApiRequest} from "next";
+import {Readable} from "stream";
 import {connect} from "../../../lib/db";
 import {TokenType} from "../../../lib/db/interfaces/repository";
 import {RepositoryModel} from "../../../lib/db/models/repository";
 import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
+import {generateRepositoryNFTImage} from "../../../lib/handlebars";
+import {initPinata, uploadToPinata} from "../../../lib/pinata";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()
@@ -47,7 +50,7 @@ export class CreateTokenizedRepositoryDTO {
 
   @IsArray()
   @IsOptional()
-  blacklistedAddresses?: string[];
+  blacklistedAddresses!: string[];
 }
 
 export class TokenRequirement {
@@ -96,6 +99,12 @@ class CreateTokenizedRepositoryHandler {
       repositoryOwner,
       repositoryName
     );
+    const repoImageBuffer = await generateRepositoryNFTImage(repo.name);
+    await initPinata(
+      process.env.PINATA_API_KEY as string,
+      process.env.PINATA_API_SECRET as string
+    );
+    const response = await uploadToPinata(Readable.from(repoImageBuffer));
     return await RepositoryModel.create({
       name: repo.name,
       description: repo.description,
@@ -103,8 +112,12 @@ class CreateTokenizedRepositoryHandler {
       githubId: repo.id,
       ownerAddress: user.address,
       memberAddresses: [user.address],
-      requirements,
-      blacklistedAddresses,
+      requirements: requirements.map((r) => ({
+        ...r,
+        address: r.address.toLowerCase(),
+      })),
+      blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
+      imageIpfsHash: response.IpfsHash,
     });
   }
 
