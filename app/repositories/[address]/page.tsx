@@ -77,7 +77,7 @@ export default function RepoPage({params}: {params: any}) {
           type="button"
           onClick={() =>
             navigator.clipboard.writeText(
-              `https://gitgate.github.com/repositories/${repository._id}/invite`
+              `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
             )
           }
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
@@ -89,7 +89,7 @@ export default function RepoPage({params}: {params: any}) {
             type="button"
             onClick={() =>
               navigator.clipboard.writeText(
-                `https://gitgate.github.com/repositories/${repository._id}/invite`
+                `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
               )
             }
             className="inline-flex items-center justify-center rounded-md border border-red-500 bg-transparent px-4 py-2 text-sm font-medium text-red-500 shadow-sm hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-auto"
@@ -118,15 +118,35 @@ export default function RepoPage({params}: {params: any}) {
           {repository.requirements.length === 0 && (
             <p className="mt-2 text-gray-300">No token requirement!</p>
           )}
-          <div className="grid grid-cols-2 md:grid-cols-3 mt-2 gap-4">
-            {repository.requirements.map((address: string) => {
+          <div className="grid grid-cols-2 md:grid-cols-2 mt-2 gap-4">
+            {repository.requirements.map((requirement: any) => {
+              if (requirement.type === "erc-20") {
+                return (
+                  <Link
+                    href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                    target={"_blank"}
+                  >
+                    <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
+                      <span className="text-xs">
+                        {requirement.amount} {shortenHex(requirement.address)} -{" "}
+                        {requirement.type.toUpperCase()}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              }
               return (
-                <span
-                  onClick={() => push(`/profile/${address}`)}
-                  className="inline-flex transition-transform hover:scale-105 text-center w-auto cursor-pointer items-center justify-center rounded-md bg-purple-100 px-2.5 py-0.5 text-sm font-medium text-purple-800"
+                <Link
+                  href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                  target={"_blank"}
                 >
-                  {shortenHex(address, 5)}
-                </span>
+                  <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
+                    <span className="text-xs">
+                      {shortenHex(requirement.address)} -{" "}
+                      {requirement.type.toUpperCase()}
+                    </span>
+                  </div>
+                </Link>
               );
             })}
           </div>
@@ -145,9 +165,9 @@ export default function RepoPage({params}: {params: any}) {
                 return (
                   <span
                     onClick={() => push(`/profile/${address}`)}
-                    className="inline-flex transition-transform hover:scale-105 text-center w-auto cursor-pointer items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800"
+                    className="text-xs bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center"
                   >
-                    {shortenHex(address)}
+                    {shortenHex(address, 5)}
                   </span>
                 );
               })}
@@ -160,7 +180,7 @@ export default function RepoPage({params}: {params: any}) {
               return (
                 <span
                   onClick={() => push(`/profile/${address}`)}
-                  className="inline-flex transition-transform hover:scale-105 text-center w-auto cursor-pointer items-center justify-center rounded-md bg-purple-100 px-2.5 py-0.5 text-sm font-medium text-purple-800"
+                  className="bg-white text-xs transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center"
                 >
                   {shortenHex(address, 8)}
                 </span>

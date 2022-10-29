@@ -38,13 +38,6 @@ export default function SearchModal({
           project.name.toLowerCase().includes(query)
         );
 
-  const filteredUsers =
-    rawQuery === ">"
-      ? users
-      : query === "" || rawQuery.startsWith("#")
-      ? []
-      : users.filter((user: any) => user.name.toLowerCase().includes(query));
-
   useEffect(() => {
     getData();
   }, [rawQuery]);
@@ -53,10 +46,8 @@ export default function SearchModal({
     if (rawQuery === ">" || rawQuery.startsWith(">")) {
       // searching users
       try {
-        console.log(rawQuery);
-        const usersRes = await axios.get(
-          `/api/users/${rawQuery.replace("%3E", "")}`
-        );
+        const address = rawQuery.replaceAll(">", "").replaceAll("%3E", "");
+        const usersRes = await axios.get(`/api/users/${address}`);
         setUsers([usersRes.data]);
       } catch (error) {
         setUsers([]);
@@ -103,7 +94,13 @@ export default function SearchModal({
             <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox
                 onChange={(item: any) => {
-                  router.push(item.url);
+                  if (item.address) {
+                    router.push(`/profile/${item.address}`);
+                  } else {
+                    router.push(`/profile/${item._id}`);
+                  }
+                  setUsers([]);
+                  setRepos([]);
                   setOpen(false);
                 }}
               >
@@ -119,7 +116,7 @@ export default function SearchModal({
                   />
                 </div>
 
-                {(filteredProjects.length > 0 || filteredUsers.length > 0) && (
+                {(filteredProjects.length > 0 || users.length > 0) && (
                   <Combobox.Options
                     static
                     className="max-h-80 scroll-py-10 scroll-py-10 scroll-pb-2 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2"
@@ -160,13 +157,13 @@ export default function SearchModal({
                         </ul>
                       </li>
                     )}
-                    {filteredUsers.length > 0 && (
+                    {users.length > 0 && (
                       <li>
                         <h2 className="text-xs font-semibold text-gray-900">
                           Users
                         </h2>
                         <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                          {filteredUsers.map((user: any) => (
+                          {users.map((user: any) => (
                             <Combobox.Option
                               key={user.id}
                               value={user}
@@ -187,7 +184,7 @@ export default function SearchModal({
                                     aria-hidden="true"
                                   />
                                   <span className="ml-3 flex-auto truncate">
-                                    {user.name}
+                                    {user.ensLabel || user.address}
                                   </span>
                                 </>
                               )}
@@ -220,7 +217,7 @@ export default function SearchModal({
                 {query !== "" &&
                   rawQuery !== "?" &&
                   filteredProjects.length === 0 &&
-                  filteredUsers.length === 0 && (
+                  users.length === 0 && (
                     <div className="py-14 px-6 text-center text-sm sm:px-14">
                       <ExclamationTriangleIcon
                         className="mx-auto h-6 w-6 text-gray-400"

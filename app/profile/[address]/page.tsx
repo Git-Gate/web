@@ -102,7 +102,7 @@ export default function Profile({params}: {params: {address: string}}) {
         </div>
       </div>
       <div className="w-full ml-auto md:w-8/12">
-        <div className="flex flex-col h-screen bg-indigo-500 py-36 px-8 text-black">
+        <div className="flex flex-col h-screen bg-indigo-500 py-24 md:py-36 px-8 text-black">
           <h2 className="mb-5 text-4xl font-bold">
             {isOwnProfile
               ? "Your tokenized repositories"

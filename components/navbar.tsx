@@ -43,10 +43,10 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isReady && account.address && !localStorage.getItem("gitgate_token")) {
+    if (isReady && account.address) {
       signUp();
     }
-  }, [isReady]);
+  }, [isReady, account.address]);
 
   const signUp = async () => {
     try {
@@ -63,7 +63,8 @@ export default function Navbar() {
               Authorization: `Bearer ${localStorage.getItem("gitgate_token")}`,
             },
           });
-          if (meRes.status === 403) throw new Error();
+          console.log(meRes.data.address.toLowerCase());
+          console.log(account.address.toLowerCase());
           if (
             meRes.data.address.toLowerCase() !== account.address.toLowerCase()
           ) {
@@ -72,6 +73,8 @@ export default function Navbar() {
             if (isNewUser) push(`/connect/${account.address}`);
           }
         } catch (error) {
+          console.log("here");
+          console.log(error);
           const isNewUser = await registerGitgateToken();
           if (isNewUser) push(`/connect/${account.address}`);
         }

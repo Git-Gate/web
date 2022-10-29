@@ -2,25 +2,53 @@
 
 import {useAccount, useConnectModal} from "@web3modal/react";
 import axios from "axios";
+import Link from "next/link";
 import {useEffect, useState} from "react";
 import LoginGithub from "react-login-github";
 import {toast} from "react-toastify";
 
-export default function InviteRepoPage() {
+export default function InviteRepoPage({params}: {params: {address: string}}) {
   const {account, isReady} = useAccount();
   const [step, setStep] = useState<number>(0);
   const [success, setSuccess] = useState(false);
   const {isOpen, open} = useConnectModal();
+  const [repo, setRepo] = useState<any>(null);
 
   useEffect(() => {
-    if (account.address && step === 0) {
+    getRepo();
+  }, []);
+
+  useEffect(() => {
+    if (account.address && !repo) {
       setStep(1);
     }
   }, [account]);
 
+  const getRepo = async () => {
+    const repoRes = await axios.get(`/api/repositories/${params.address}`);
+    setRepo(repoRes.data);
+    if (account && account.address) {
+      setStep(1);
+    }
+  };
+
   const checkEligibility = async () => {
-    setStep(2);
-    setSuccess(Math.random() > 0.5);
+    try {
+      const checkEligibilityRes = await axios.get(
+        `/api/repositories/${repo._id}/access`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("gitgate_token")}`,
+          },
+        }
+      );
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+      setSuccess(false);
+    } finally {
+      setStep(2);
+    }
   };
 
   const onGithubLoginSuccess = async (response: any) => {
@@ -127,12 +155,27 @@ export default function InviteRepoPage() {
     }
   };
 
+  if (!repo) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl animate-pulse">Loading...</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen max-w-3xl mx-auto flex flex-col items-center justify-center space-y-4">
       <h1 className="text-3xl md:text-5xl text-center font-extrabold z-20">
         <p>🦄</p>
         <p className="mt-4">
-          Get access to <span className="underline">urbeEth</span> repo.
+          Get access to the{" "}
+          <Link
+            href={`https://github.com/${repo.githubOwner}/${repo.name}`}
+            target="_blank"
+          >
+            <span className="underline cursor-pointer">{repo.name}</span>
+          </Link>{" "}
+          repository.
         </p>
       </h1>
       <div className="px-8 md:px-0">{getBody()}</div>

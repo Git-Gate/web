@@ -18,7 +18,7 @@ export default function Home() {
           initial={{opacity: 0}}
           animate={{opacity: 0.4}}
           transition={{duration: 1, delay: 0.5}}
-          className="absolute z-10 w-full skew-y-3 motion-safe:animate-wiggle"
+          className="absolute z-10 w-3/4 md:w-full skew-y-3 motion-safe:animate-wiggle"
           src="/ethereum.png"
           viewport={{once: true}}
         />
@@ -39,7 +39,7 @@ export default function Home() {
       </motion.div>
       <div
         id="explore"
-        className="bg-white text-black flex flex-col w-full items-center justify-center py-16 space-y-8 h-screen px-8 md:px-4 z-20 relative"
+        className="bg-white text-black flex flex-col w-full items-center justify-center py-16 space-y-8 min-h-screen px-8 md:px-4 z-20 relative"
       >
         <div className="max-w-5xl flex flex-col md:flex-row items-center justify-center">
           <motion.img
@@ -97,11 +97,11 @@ export default function Home() {
       </div>
       <div
         id="footer"
-        className="bg-black text-white flex flex-col w-full items-center justify-center py-8 px-8 md:px-4 z-20 relative"
+        className="bg-black text-white text-center flex flex-col w-full items-center justify-center py-8 px-8 md:px-4 z-20 relative"
       >
         <p>
-          <span className="font-bold">GitGate</span> - Made with ❤️ @ETHLisbon
-          Hackaton.
+          <span className="font-bold">GitGate</span> - Made with ❤️ from 🇮🇹
+          @ETHLisbon Hackaton.
         </p>
       </div>
     </div>
