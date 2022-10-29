@@ -12,7 +12,7 @@ const RepositorySchema = new Schema(
     memberAddresses: [String],
     requirements: Schema.Types.Array,
     blacklistedAddresses: [String],
-    contractAddress: String,
+    soulboundNFTContractAddress: String,
     imageIpfsHash: String,
   },
   {collection: "repositories"}
