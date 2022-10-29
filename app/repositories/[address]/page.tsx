@@ -3,20 +3,20 @@
 import {
   ArrowPathRoundedSquareIcon,
   ClipboardDocumentIcon,
-  TrashIcon,
 } from "@heroicons/react/20/solid";
 import {useAccount} from "@web3modal/react";
 import axios from "axios";
+import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import RepoImage from "../../../components/repoImage";
+import {shortenHex} from "../../../utils";
 
 export default function RepoPage({params}: {params: any}) {
   const {account} = useAccount();
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
-  const [githubData, setGithubData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const {push} = useRouter();
 
@@ -42,6 +42,8 @@ export default function RepoPage({params}: {params: any}) {
       setLoading(false);
     }
   };
+
+  const connectGitGate = async () => {};
 
   if (loading) {
     return (
@@ -75,7 +77,7 @@ export default function RepoPage({params}: {params: any}) {
   return (
     <div className="relative">
       <div className="relative inset-0 w-full min-h-screen md:fixed md:w-4/12 bg-indigo-500">
-        <div className="flex flex-col items-center space-y-4 py-36">
+        <div className="flex flex-col items-center space-y-4 py-36 px-4">
           <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
           <div className="flex flex-col items-center space-y-4">
             <h1 className="text-4xl font-bold">{repository.name}</h1>
@@ -89,7 +91,7 @@ export default function RepoPage({params}: {params: any}) {
                   `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
                 )
               }
-              className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform md:w-full"
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform w-full"
             >
               <ClipboardDocumentIcon className="h-4 mr-2" />
               <span>Copy access link</span>
@@ -102,17 +104,101 @@ export default function RepoPage({params}: {params: any}) {
                     `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
                   )
                 }
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-full"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full"
               >
                 <ArrowPathRoundedSquareIcon className="h-4 mr-2" />
                 <span>Transfer ownership</span>
               </button>
             )}
+            {isOwner && (
+              <div
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
+                onClick={() => connectGitGate()}
+              >
+                Connect GitGate
+              </div>
+            )}
           </div>
         </div>
       </div>
       <div className="w-full ml-auto md:w-8/12">
-        <div className="flex flex-col items-center h-screen bg-black py-24 md:py-36 px-8 text-black"></div>
+        <div className="flex flex-col items-start justify-start space-y-8 h-screen bg-black py-24 md:py-36 px-8 text-white">
+          <div className="flex flex-col">
+            <h3 className="text-xl font-semibold">Requirements</h3>
+            {repository.requirements.length === 0 && (
+              <p className="mt-2 text-gray-300">No token requirement!</p>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-2 mt-2 gap-4">
+              {repository.requirements.map((requirement: any) => {
+                if (requirement.type === "erc-20") {
+                  return (
+                    <Link
+                      href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                      target={"_blank"}
+                    >
+                      <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
+                        <span className="text-xs">
+                          {requirement.amount} {shortenHex(requirement.address)}{" "}
+                          - {requirement.type.toUpperCase()}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                }
+                return (
+                  <Link
+                    href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                    target={"_blank"}
+                  >
+                    <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
+                      <span className="text-xs">
+                        {shortenHex(requirement.address)} -{" "}
+                        {requirement.type.toUpperCase()}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <h3 className="text-xl font-semibold">Blacklist</h3>
+            {repository.blacklistedAddresses.filter(
+              (address: string) => address !== ""
+            ).length === 0 && (
+              <p className="mt-2 text-gray-300">No blacklisted address!</p>
+            )}
+            <div className="grid grid-cols-1 mt-2 gap-4">
+              {repository.blacklistedAddresses
+                .filter((address: string) => address !== "")
+                .map((address: string) => {
+                  return (
+                    <span
+                      onClick={() => push(`/profile/${address}`)}
+                      className="text-xs bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center"
+                    >
+                      {shortenHex(address, 5)}
+                    </span>
+                  );
+                })}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <h3 className="text-xl font-semibold">Members</h3>
+            <div className="grid grid-cols-1 mt-2 gap-4">
+              {repository.memberAddresses.map((address: string) => {
+                return (
+                  <span
+                    onClick={() => push(`/profile/${address}`)}
+                    className="bg-white text-xs transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center"
+                  >
+                    {shortenHex(address, 8)}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

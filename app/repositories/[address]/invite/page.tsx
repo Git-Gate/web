@@ -13,6 +13,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   const [success, setSuccess] = useState(false);
   const {isOpen, open} = useConnectModal();
   const [repo, setRepo] = useState<any>(null);
+  const [eLoading, setELoading] = useState(false);
 
   useEffect(() => {
     getRepo();
@@ -34,6 +35,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
 
   const checkEligibility = async () => {
     try {
+      setELoading(true);
       const checkEligibilityRes = await axios.get(
         `/api/repositories/${repo._id}/access`,
         {
@@ -47,6 +49,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
       console.error(error);
       setSuccess(false);
     } finally {
+      setELoading(false);
       setStep(2);
     }
   };
@@ -116,7 +119,11 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               onClick={() => checkEligibility()}
               className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Check eligiblity
+              {eLoading ? (
+                <span className="animate-pulse">Checking...</span>
+              ) : (
+                "Check eligiblity"
+              )}
             </button>
           </div>
         );

@@ -10,20 +10,8 @@ import {
 } from "@heroicons/react/20/solid";
 import {Combobox} from "@headlessui/react";
 import {toast} from "react-toastify";
-import {
-  useAccount,
-  useContract,
-  useContractWrite,
-  useProvider,
-  useSigner,
-  useSignMessage,
-  useWaitForTransaction,
-} from "@web3modal/react";
+import {useAccount, useSignMessage} from "@web3modal/react";
 import {ethers} from "ethers";
-import {NFTStorage, File, Blob} from "nft.storage";
-import {toUtf8Bytes} from "ethers/lib/utils";
-import {getSvg} from "../../utils";
-import registryAbi from "../abis/registryAbi.json";
 import NewRequirementSlide from "../../components/newRequirementSlide";
 import RequirementsTable from "../../components/requirementsTable";
 
@@ -40,6 +28,7 @@ export default function NewRepository() {
   const [repos, setRepos] = useState<any[]>([]);
   const [success, setSuccess] = useState(false);
   const [blacklistedAddresses, setBlacklistedAddresses] = useState("");
+  const [tokenizeLoading, setTokenizeLoading] = useState(false);
   const [tokenGroups, setTokenGroups] = useState<any[]>([
     {
       type: "ERC-20",
@@ -108,6 +97,7 @@ export default function NewRepository() {
 
   const createRepo = async () => {
     // TODO: change this
+    setTokenizeLoading(true);
     const requirements = [];
     for (let i = 0; i < tokenGroups.length; i++) {
       for (let j = 0; j < tokenGroups[i].tokens.length; j++) {
@@ -122,6 +112,7 @@ export default function NewRepository() {
         });
       }
     }
+    console.log(requirements);
     const apiData: any = {
       repositoryId: selectedRepo.id,
       repositoryName: selectedRepo.name,
@@ -148,12 +139,13 @@ export default function NewRepository() {
       });
       apiData.messageHash = hashedMessage;
       apiData.signedMessage = signedMessage;
-      await axios.post(`/api/repositories`, apiData, {
+      const newRepo = await axios.post(`/api/repositories`, apiData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("gitgate_token")}`,
           "Content-Type": "application/json",
         },
       });
+      setSelectedRepo(newRepo);
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -167,6 +159,8 @@ export default function NewRepository() {
         progress: undefined,
         theme: "dark",
       });
+    } finally {
+      setTokenizeLoading(false);
     }
   };
 
@@ -189,7 +183,7 @@ export default function NewRepository() {
               name="text"
               id="url"
               className="block w-full rounded-none rounded-l-md border-gray-300 pl-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder={`https://web-gitgate.vercel.app/repositories/${selectedRepo.id}/invite`}
+              placeholder={`https://web-gitgate.vercel.app/repositories/${selectedRepo._id}/invite`}
             />
           </div>
           <button
@@ -197,7 +191,7 @@ export default function NewRepository() {
             className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             onClick={() =>
               navigator.clipboard.writeText(
-                `https://web-gitgate.vercel.app/repositories/${selectedRepo.id}/invite`
+                `https://web-gitgate.vercel.app/repositories/${selectedRepo._id}/invite`
               )
             }
           >
@@ -332,7 +326,11 @@ export default function NewRepository() {
                 type="button"
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
               >
-                Tokenize {selectedRepo.name}
+                {tokenizeLoading ? (
+                  <span className="animate-pulse">Tokenizing...</span>
+                ) : (
+                  <>Tokenize {selectedRepo.name}</>
+                )}
               </button>
             </div>
           </div>
