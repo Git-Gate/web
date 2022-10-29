@@ -1,6 +1,6 @@
 "use client";
 
-import {Fragment, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {Combobox, Dialog, Transition} from "@headlessui/react";
 import {MagnifyingGlassIcon, UserIcon} from "@heroicons/react/20/solid";
 import {
@@ -9,25 +9,7 @@ import {
   LifebuoyIcon,
 } from "@heroicons/react/24/outline";
 import {useRouter} from "next/navigation";
-
-const repos = [
-  {
-    id: 1,
-    name: "Workflow Inc. / Website Redesign",
-    category: "Projects",
-    url: "#",
-  },
-  // More repos...
-];
-
-const users = [
-  {
-    id: 1,
-    name: "orbulo.eth",
-    url: "/profile/0x17030b563C1eef80cf33b065a5D4a4f4F0Ae3186",
-  },
-  // More users...
-];
+import axios from "axios";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -41,6 +23,8 @@ export default function SearchModal({
   setOpen: (value: boolean) => void;
 }) {
   const [rawQuery, setRawQuery] = useState("");
+  const [users, setUsers] = useState<any>([]);
+  const [repos, setRepos] = useState<any>([]);
   const router = useRouter();
 
   const query = rawQuery.toLowerCase().replace(/^[#>]/, "");
@@ -50,14 +34,32 @@ export default function SearchModal({
       ? repos
       : query === "" || rawQuery.startsWith(">")
       ? []
-      : repos.filter((project) => project.name.toLowerCase().includes(query));
+      : repos.filter((project: any) =>
+          project.name.toLowerCase().includes(query)
+        );
 
-  const filteredUsers =
-    rawQuery === ">"
-      ? users
-      : query === "" || rawQuery.startsWith("#")
-      ? []
-      : users.filter((user) => user.name.toLowerCase().includes(query));
+  useEffect(() => {
+    getData();
+  }, [rawQuery]);
+
+  const getData = async () => {
+    if (rawQuery === ">" || rawQuery.startsWith(">")) {
+      // searching users
+      try {
+        const address = rawQuery.replaceAll(">", "").replaceAll("%3E", "");
+        const usersRes = await axios.get(`/api/users/${address}`);
+        setUsers([usersRes.data]);
+      } catch (error) {
+        setUsers([]);
+      }
+      setRepos([]);
+    } else if (rawQuery === "#" || rawQuery.startsWith("#")) {
+      // searching repos
+      setUsers([]);
+    } else {
+      // searching both
+    }
+  };
 
   return (
     <Transition.Root
@@ -92,7 +94,13 @@ export default function SearchModal({
             <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox
                 onChange={(item: any) => {
-                  router.push(item.url);
+                  if (item.address) {
+                    router.push(`/profile/${item.address}`);
+                  } else {
+                    router.push(`/profile/${item._id}`);
+                  }
+                  setUsers([]);
+                  setRepos([]);
                   setOpen(false);
                 }}
               >
@@ -108,7 +116,7 @@ export default function SearchModal({
                   />
                 </div>
 
-                {(filteredProjects.length > 0 || filteredUsers.length > 0) && (
+                {(filteredProjects.length > 0 || users.length > 0) && (
                   <Combobox.Options
                     static
                     className="max-h-80 scroll-py-10 scroll-py-10 scroll-pb-2 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2"
@@ -119,7 +127,7 @@ export default function SearchModal({
                           Repositories
                         </h2>
                         <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                          {filteredProjects.map((project) => (
+                          {filteredProjects.map((project: any) => (
                             <Combobox.Option
                               key={project.id}
                               value={project}
@@ -149,13 +157,13 @@ export default function SearchModal({
                         </ul>
                       </li>
                     )}
-                    {filteredUsers.length > 0 && (
+                    {users.length > 0 && (
                       <li>
                         <h2 className="text-xs font-semibold text-gray-900">
                           Users
                         </h2>
                         <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                          {filteredUsers.map((user) => (
+                          {users.map((user: any) => (
                             <Combobox.Option
                               key={user.id}
                               value={user}
@@ -176,7 +184,7 @@ export default function SearchModal({
                                     aria-hidden="true"
                                   />
                                   <span className="ml-3 flex-auto truncate">
-                                    {user.name}
+                                    {user.ensLabel || user.address}
                                   </span>
                                 </>
                               )}
@@ -209,7 +217,7 @@ export default function SearchModal({
                 {query !== "" &&
                   rawQuery !== "?" &&
                   filteredProjects.length === 0 &&
-                  filteredUsers.length === 0 && (
+                  users.length === 0 && (
                     <div className="py-14 px-6 text-center text-sm sm:px-14">
                       <ExclamationTriangleIcon
                         className="mx-auto h-6 w-6 text-gray-400"

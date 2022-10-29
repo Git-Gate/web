@@ -5,35 +5,43 @@ import {useAccount} from "@web3modal/react";
 import {useState} from "react";
 import LoginGithub from "react-login-github";
 import {toast} from "react-toastify";
+import axios from "axios";
+import {useRouter} from "next/navigation";
 import {shortenHex} from "../../../utils";
-import axios from 'axios';
-import { useRouter } from "next/navigation";
 
 export default function Connect() {
   const {account, isReady} = useAccount();
   const [open, setOpen] = useState(false);
-  const { push } = useRouter();
+  const {push} = useRouter();
 
   const onGithubLoginSuccess = async (response: any) => {
-    if (typeof window !== 'undefined' && localStorage.getItem('gitgate_token')) {
-      const { code } = response;
+    if (
+      typeof window !== "undefined" &&
+      localStorage.getItem("gitgate_token")
+    ) {
+      const {code} = response;
       const codeRes = await axios.post(
-          '/api/auth/github', 
-          { code }, 
-          { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}` }}
+        "/api/auth/github",
+        {code},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("gitgate_token")}`,
+          },
+        }
       );
       if (codeRes.status === 200) {
-          toast.success("Connection successful!", {
-              position: "top-right",
-              autoClose: 2500,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-          });
-          push(`/profile/${account.address}`)
+        toast.success("Connection successful!", {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        push(`/profile/${account.address}`);
       }
     }
   };

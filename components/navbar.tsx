@@ -1,11 +1,11 @@
 "use client";
 
 import {useConnectModal, useAccount, useSignMessage} from "@web3modal/react";
-import {} from "@web3modal/ethereum";
 import {useEffect, useState} from "react";
 import Link from "next/link";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import useKeyboardShortcut from "use-keyboard-shortcut";
 import SearchModal from "./searchModal";
 import {isFlask, shortenHex} from "../utils";
 
@@ -16,47 +16,65 @@ export default function Navbar() {
   const {signMessage} = useSignMessage({message: ""});
   const {push} = useRouter();
   const [changeColor, setChangeColor] = useState(false);
+  const {flushHeldKeys: _} = useKeyboardShortcut(
+    ["Control", "F"],
+    (_shortcutKeys) => setShowSearch(!showSearch),
+    {
+      overrideSystem: false,
+      ignoreInputFields: false,
+      repeatOnHold: false,
+    }
+  );
 
   const connectWallet = () => {
     if (!isOpen) open();
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.onscroll = (event) => {
+    if (typeof window !== "undefined") {
+      window.onscroll = (_event) => {
         if (window.scrollY > 10) {
           setChangeColor(true);
         } else if (window.scrollY < 10) {
           setChangeColor(false);
         }
-      }
+      };
     }
   }, []);
 
   useEffect(() => {
-    if (isReady) {
+    if (isReady && account.address) {
       signUp();
     }
-  }, [isReady]);
+  }, [isReady, account.address]);
 
   const signUp = async () => {
     try {
-      if (typeof window !== undefined && !localStorage.getItem('gitgate_token')) {
+      if (
+        typeof window !== undefined &&
+        !localStorage.getItem("gitgate_token")
+      ) {
         const isNewUser = await registerGitgateToken();
         if (isNewUser) push(`/connect/${account.address}`);
       } else {
         try {
-          const meRes = await axios.get(
-            "/api/users/me",
-            { headers: { "Authorization": `Bearer ${localStorage.getItem('gitgate_token')}`}}
-          );
-          if (meRes.status === 403) throw new Error();
-          if (meRes.data.address.toLowerCase() !== account.address.toLowerCase()) {
-            localStorage.removeItem('gitgate_token');
+          const meRes = await axios.get("/api/users/me", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("gitgate_token")}`,
+            },
+          });
+          console.log(meRes.data.address.toLowerCase());
+          console.log(account.address.toLowerCase());
+          if (
+            meRes.data.address.toLowerCase() !== account.address.toLowerCase()
+          ) {
+            localStorage.removeItem("gitgate_token");
             const isNewUser = await registerGitgateToken();
             if (isNewUser) push(`/connect/${account.address}`);
           }
         } catch (error) {
+          console.log("here");
+          console.log(error);
           const isNewUser = await registerGitgateToken();
           if (isNewUser) push(`/connect/${account.address}`);
         }
@@ -81,15 +99,19 @@ export default function Navbar() {
     );
     const {token, isNewUser} = signUpRes.data;
 
-    const hasFlask = await isFlask();
-    localStorage.setItem('gitgate_token', token);
+    const _hasFlask = await isFlask();
+    localStorage.setItem("gitgate_token", token);
     return isNewUser;
-  }
+  };
 
   return (
-    <div className={`absolute top-0 left-0  py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
+    <div
+      className={`fixed top-0 left-0 w-full py-4 px-8 transition-colors ${
+        !changeColor ? "bg-transparent" : "bg-black"
+      } z-30`}
+    >
       <div className="flex justify-between items-center">
-        <div className="flex items-end space-x-8">
+        <div className="flex items-end space-x-4 md:space-x-8">
           <Link href={"/"}>
             <h4 className="font-bold text-2xl cursor-pointer">GitGate</h4>
           </Link>

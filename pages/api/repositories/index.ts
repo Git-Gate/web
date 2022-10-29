@@ -7,7 +7,6 @@ import {
   Post,
   Query,
   Req,
-  UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
 import {
