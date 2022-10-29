@@ -77,7 +77,7 @@ export default function RepoPage({params}: {params: any}) {
   return (
     <div className="relative">
       <div className="relative inset-0 w-full min-h-screen md:fixed md:w-4/12 bg-indigo-500">
-        <div className="flex flex-col items-center space-y-4 py-36">
+        <div className="flex flex-col items-center space-y-4 py-36 px-4">
           <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
           <div className="flex flex-col items-center space-y-4">
             <h1 className="text-4xl font-bold">{repository.name}</h1>

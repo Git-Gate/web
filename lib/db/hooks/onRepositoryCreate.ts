@@ -43,6 +43,7 @@ export const onRepositoryCreate = async (data: any) => {
       {$set: {soulboundNFTContractAddress: soulboundContractAddress}}
     );
   } catch (e) {
+    console.error(e);
     throw new Error("Error while calling POGM SoulboundNFT Contract Factory");
   }
 };
