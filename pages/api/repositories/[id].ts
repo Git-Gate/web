@@ -9,6 +9,7 @@ import {
 } from "next-api-decorators";
 import type {NextApiRequest} from "next";
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
+import {ethers} from "ethers";
 import {connect} from "../../../lib/db";
 import {RepositoryModel} from "../../../lib/db/models/repository";
 import {User} from "../../../lib/db/interfaces/user";

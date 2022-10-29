@@ -20,13 +20,15 @@ import {
 } from "class-validator";
 import {Type} from "class-transformer";
 import type {NextApiRequest} from "next";
-import {Readable} from "stream";
+import {ThirdwebSDK} from "@thirdweb-dev/sdk";
+import {NFTStorage} from "nft.storage";
 import {connect} from "../../../lib/db";
 import {TokenType} from "../../../lib/db/interfaces/repository";
 import {RepositoryModel} from "../../../lib/db/models/repository";
 import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
+import {getSvg} from "../../../utils";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()
@@ -51,7 +53,10 @@ export class CreateTokenizedRepositoryDTO {
   blacklistedAddresses!: string[];
 
   @IsString()
-  imageIpfsHash!: string;
+  messageHash!: string;
+
+  @IsString()
+  signedMessage!: string;
 }
 
 export class TokenRequirement {
@@ -84,7 +89,8 @@ class CreateTokenizedRepositoryHandler {
       repositoryOwner,
       requirements,
       blacklistedAddresses,
-      imageIpfsHash,
+      signedMessage,
+      messageHash,
     } = body;
 
     const existentRepository = await RepositoryModel.findOne({
@@ -101,6 +107,59 @@ class CreateTokenizedRepositoryHandler {
       repositoryOwner,
       repositoryName
     );
+    const sdk = ThirdwebSDK.fromPrivateKey(
+      process.env.GIT_GATE_WALLET_PVT_KEY as string,
+      "mumbai"
+    );
+    const registryContract = await sdk.getContract(
+      process.env.REGISTRY_CONTRACT_ADDRESS as string
+    );
+    const client = new NFTStorage({
+      token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY as string,
+    });
+    const imageFile = new File(
+      [getSvg(repositoryName)],
+      `${repositoryName}_${repositoryOwner}.svg`,
+      {type: "image/svg"}
+    );
+    const metadataCid = await client.store({
+      name: repositoryName,
+      description: `Soulbound Proof of Github Membership (POGM) for ${repositoryName} GitHub repository.\n\n${repo.url}`,
+      image: imageFile,
+      attributes: {
+        Name: repositoryName,
+      },
+    });
+    await registryContract.call("createTokenizedRepo", [
+      [
+        repositoryId,
+        [user.address, user.address, user.address],
+        [0, 1, 2],
+        blacklistedAddresses,
+        requirements.map((requirement) =>
+          requirement.type === TokenType.ERC20
+            ? 0x0000000000000000000000000000000000000000
+            : requirement.address
+        ), // 721 e 1155 address //address(0)
+        requirements.map((requirement) =>
+          requirement.type === TokenType.ERC20
+            ? parseInt(requirement.address, 16)
+            : requirement.ids
+        ), // address -> address(uint...)
+        requirements.map((requirement) =>
+          requirement.type === TokenType.ERC721
+            ? 1
+            : requirement.type === TokenType.ERC1155
+            ? requirement.amount
+            : requirement.amount * 10 ** 18
+        ), // address -> address(uint...)
+        null,
+        repositoryName,
+        "ipfs://" + metadataCid,
+      ],
+      messageHash,
+      signedMessage,
+    ]);
     return await RepositoryModel.create({
       name: repo.name,
       description: repo.description,
@@ -114,7 +173,7 @@ class CreateTokenizedRepositoryHandler {
         address: r.address.toLowerCase(),
       })),
       blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
-      imageIpfsHash,
+      metadataIpfsHash: metadataCid,
     });
   }
 
