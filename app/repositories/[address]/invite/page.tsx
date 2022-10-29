@@ -37,7 +37,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
       setNotReady(true);
     }
     if (account && account.address) {
-      setStep(1);
+      step === 0 && setStep(1);
     }
   };
 
