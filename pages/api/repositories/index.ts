@@ -133,7 +133,7 @@ class CreateTokenizedRepositoryHandler {
     const imageFile = new File(
       [getSvg(repositoryName)],
       `${repositoryName}_${repositoryOwner}.svg`,
-      {type: "image/svg"}
+      {type: "image/svg+xml"}
     );
     const metadataCid = await client.store({
       name: repositoryName,
@@ -204,7 +204,7 @@ class CreateTokenizedRepositoryHandler {
         address: r.address.toLowerCase(),
       })),
       blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
-      metadataIpfsHash: metadataCid.url,
+      metadataIpfsHash: metadataCid.ipnft,
     });
   }
 
