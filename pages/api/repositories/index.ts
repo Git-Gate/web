@@ -7,7 +7,6 @@ import {
   Post,
   Query,
   Req,
-  UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
 import {
@@ -25,8 +24,6 @@ import type {NextApiRequest} from "next";
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
 import {NFTStorage, File} from "nft.storage";
 import {ethers} from "ethers";
-import {recoverPersonalSignature} from "@metamask/eth-sig-util";
-import {bufferToHex} from "ethereumjs-util";
 import {connect} from "../../../lib/db";
 import {TokenType} from "../../../lib/db/interfaces/repository";
 import {RepositoryModel} from "../../../lib/db/models/repository";
@@ -34,10 +31,7 @@ import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
 import {getSvg} from "../../../utils";
-import {
-  deployRepositoryRegistryContract,
-  registryContractAbi,
-} from "../../../lib/smart-contract-utils";
+import {registryContractAbi} from "../../../lib/smart-contract-utils";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()
