@@ -31,7 +31,7 @@ import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
 import {getSvg} from "../../../utils";
-import {registryContractAbi} from "../../../lib/smart-contract-utils";
+import {registryContractAbi} from "../../../lib/smart-contract-abis";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()

@@ -31,6 +31,11 @@ export class GithubClient {
     return data;
   }
 
+  async getRepositoryInstallation(owner: string, repo: string) {
+    const {data} = await this.client.apps.getRepoInstallation({owner, repo});
+    return data;
+  }
+
   async addCollaborator(owner: string, repo: string, username: string) {
     const {data} = await this.client.repos.addCollaborator({
       owner,
@@ -47,6 +52,15 @@ export class GithubClient {
       repo,
       username,
     });
+    return data;
+  }
+
+  async addRepositoryToInstallation(repoId: number, installationId: number) {
+    const {data} =
+      await this.client.apps.addRepoToInstallationForAuthenticatedUser({
+        repository_id: repoId,
+        installation_id: installationId,
+      });
     return data;
   }
 }

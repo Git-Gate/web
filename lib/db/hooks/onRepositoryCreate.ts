@@ -1,7 +1,7 @@
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
 import {Repository} from "../interfaces/repository";
 import {RepositoryModel} from "../models/repository";
-import {soulboundFactoryContractAbi} from "../../smart-contract-utils";
+import {soulboundFactoryContractAbi} from "../../smart-contract-abis";
 import {ethers} from "ethers";
 
 export const onRepositoryCreate = async (data: any) => {
