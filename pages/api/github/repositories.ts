@@ -19,7 +19,7 @@ class GithubRepositoriesHandler {
       name: repo.name,
       description: repo.description,
       private: repo.private,
-      owner: repo.owner,
+      owner: repo.owner.login,
       url: repo.url,
     }));
   }

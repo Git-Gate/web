@@ -4,11 +4,14 @@ export interface Repository extends Base {
   name: string;
   githubId: string;
   githubUrl: string;
+  githubOwner: string;
   description: string;
   ownerAddress: string;
   memberAddresses: string[];
   requirements: RepositoryTokenRequirement[];
   blacklistedAddresses: string[];
+  contractAddress?: string;
+  imageIpfsHash?: string;
 }
 
 export interface RepositoryTokenRequirement {
