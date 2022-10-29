@@ -4,14 +4,12 @@ import {Repository} from "../interfaces/repository";
 const RepositorySchema = new Schema(
   {
     name: String,
-    githubId: String,
-    githubUrl: String,
     description: String,
+    githubUrl: String,
+    githubId: String,
     ownerAddress: String,
     memberAddresses: [String],
-    requirements: {
-      type: [{type: String, address: String, amount: Number, ids: [Number]}],
-    },
+    requirements: Schema.Types.Array,
     blacklistedAddresses: [String],
   },
   {collection: "repositories"}

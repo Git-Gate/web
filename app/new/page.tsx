@@ -135,13 +135,13 @@ export default function NewRepository() {
                     name="text"
                     id="url"
                     className="block w-full rounded-none rounded-l-md border-gray-300 pl-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder={`https://gitgate.github.com/repositories/${selectedRepo.id}/access`}
+                    placeholder={`https://gitgate.github.com/repositories/${selectedRepo.id}/invite`}
                 />
                 </div>
                 <button
                     type="button"
                     className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    onClick={() => navigator.clipboard.writeText(`https://gitgate.github.com/repositories/${selectedRepo.id}/access`)}
+                    onClick={() => navigator.clipboard.writeText(`https://gitgate.github.com/repositories/${selectedRepo.id}/invite`)}
                 >
                     <ClipboardIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                     <span>Copy</span>
