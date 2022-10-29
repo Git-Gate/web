@@ -25,4 +25,9 @@ export class GithubClient {
     );
     return data;
   }
+
+  async getRepository(owner: string, repo: string) {
+    const {data} = await this.client.repos.get({owner, repo});
+    return data;
+  }
 }

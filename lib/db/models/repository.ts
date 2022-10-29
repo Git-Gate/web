@@ -4,6 +4,7 @@ import {Repository} from "../interfaces/repository";
 const RepositorySchema = new Schema({
   name: String,
   githubId: String,
+  githubUrl: String,
   description: String,
   userId: String,
   owner: String,
