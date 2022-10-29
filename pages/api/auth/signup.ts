@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
-import {IsEthereumAddress, IsNotEmpty, IsString} from "class-validator";
+import {IsEthereumAddress, IsNumber, IsString} from "class-validator";
 import {getUserAuthToken} from "./utils";
 import {UserModel} from "../../../lib/db/models/user";
 import {connect} from "../../../lib/db";
@@ -20,7 +20,7 @@ export class SignupDTO {
   @IsString()
   signature!: string;
 
-  @IsNotEmpty()
+  @IsNumber()
   nonce!: number;
 }
 
