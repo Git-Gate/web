@@ -30,4 +30,23 @@ export class GithubClient {
     const {data} = await this.client.repos.get({owner, repo});
     return data;
   }
+
+  async addCollaborator(owner: string, repo: string, username: string) {
+    const {data} = await this.client.repos.addCollaborator({
+      owner,
+      repo,
+      username,
+      permission: "push",
+    });
+    return data;
+  }
+
+  async checkCollaborator(owner: string, repo: string, username: string) {
+    const {data} = await this.client.repos.checkCollaborator({
+      owner,
+      repo,
+      username,
+    });
+    return data;
+  }
 }

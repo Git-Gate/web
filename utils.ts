@@ -1,4 +1,4 @@
-import { base64 } from "ethers/lib/utils";
+import {base64} from "ethers/lib/utils";
 
 const svgImage = `
 <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,22 +75,24 @@ const svgImage = `
 `;
 
 export function shortenHex(hex: string, length = 4) {
-    return `${hex.substring(0, length + 2)}…${hex.substring(
-      hex.length - length
-    )}`;
+  return `${hex.substring(0, length + 2)}…${hex.substring(
+    hex.length - length
+  )}`;
 }
 
 export const isFlask = async () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const provider = window.ethereum;
-  
+
     try {
       const clientVersion = await provider?.request({
-        method: 'web3_clientVersion',
+        method: "web3_clientVersion",
       });
-  
-      const isFlaskDetected = (clientVersion as unknown as string[])?.includes('flask');
-  
+
+      const isFlaskDetected = (clientVersion as unknown as string[])?.includes(
+        "flask"
+      );
+
       return Boolean(provider && isFlaskDetected);
     } catch {
       return false;
@@ -101,4 +103,4 @@ export const isFlask = async () => {
 
 export const getSvg = (repoName: string) => {
   return btoa(svgImage.toString().replace("{REPLACE}", repoName));
-}
+};
