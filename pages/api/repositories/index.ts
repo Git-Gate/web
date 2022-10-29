@@ -3,9 +3,11 @@ import {
   Body,
   createHandler,
   Get,
+  InternalServerErrorException,
   Post,
   Query,
   Req,
+  UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
 import {
@@ -21,7 +23,10 @@ import {
 import {Type} from "class-transformer";
 import type {NextApiRequest} from "next";
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
-import {NFTStorage} from "nft.storage";
+import {NFTStorage, File} from "nft.storage";
+import {ethers} from "ethers";
+import {recoverPersonalSignature} from "@metamask/eth-sig-util";
+import {bufferToHex} from "ethereumjs-util";
 import {connect} from "../../../lib/db";
 import {TokenType} from "../../../lib/db/interfaces/repository";
 import {RepositoryModel} from "../../../lib/db/models/repository";
@@ -29,6 +34,10 @@ import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
 import {getSvg} from "../../../utils";
+import {
+  deployRepositoryRegistryContract,
+  registryContractAbi,
+} from "../../../lib/smart-contract-utils";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()
@@ -98,7 +107,7 @@ class CreateTokenizedRepositoryHandler {
     });
 
     if (existentRepository) {
-      throw new BadRequestException("Repository already existed.");
+      throw new BadRequestException("Repository already existing.");
     }
 
     const user = req.user as User;
@@ -109,13 +118,23 @@ class CreateTokenizedRepositoryHandler {
     );
     const sdk = ThirdwebSDK.fromPrivateKey(
       process.env.GIT_GATE_WALLET_PVT_KEY as string,
-      "mumbai"
+      "mumbai",
+      {
+        gasSettings: {
+          speed: "fastest",
+        },
+      }
     );
+
     const registryContract = await sdk.getContract(
-      process.env.REGISTRY_CONTRACT_ADDRESS as string
+      process.env.REGISTRY_CONTRACT_ADDRESS as string,
+      JSON.parse(registryContractAbi.result)
     );
+    registryContract.interceptor.overrideNextTransaction(() => ({
+      gasLimit: 3000000,
+    }));
     const client = new NFTStorage({
-      token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY as string,
+      token: process.env.NFT_STORAGE_API_KEY as string,
     });
     const imageFile = new File(
       [getSvg(repositoryName)],
@@ -130,36 +149,54 @@ class CreateTokenizedRepositoryHandler {
         Name: repositoryName,
       },
     });
-    await registryContract.call("createTokenizedRepo", [
-      [
-        repositoryId,
-        [user.address, user.address, user.address],
-        [0, 1, 2],
-        blacklistedAddresses,
-        requirements.map((requirement) =>
-          requirement.type === TokenType.ERC20
-            ? 0x0000000000000000000000000000000000000000
-            : requirement.address
-        ), // 721 e 1155 address //address(0)
-        requirements.map((requirement) =>
-          requirement.type === TokenType.ERC20
-            ? parseInt(requirement.address, 16)
-            : requirement.ids
-        ), // address -> address(uint...)
-        requirements.map((requirement) =>
-          requirement.type === TokenType.ERC721
-            ? 1
-            : requirement.type === TokenType.ERC1155
-            ? requirement.amount
-            : requirement.amount * 10 ** 18
-        ), // address -> address(uint...)
-        null,
-        repositoryName,
-        "ipfs://" + metadataCid,
+
+    const originalUserAddress = ethers.utils.getAddress(user.address);
+    const repoStruct = {
+      githubRepoId: repositoryId,
+      operators: [
+        originalUserAddress,
+        originalUserAddress,
+        originalUserAddress,
       ],
-      messageHash,
-      signedMessage,
-    ]);
+      op: [0, 1, 2],
+      blacklistedAddresses: blacklistedAddresses.map((a) =>
+        ethers.utils.getAddress(a.trim())
+      ),
+      collections: requirements.map((requirement) =>
+        requirement.type === TokenType.ERC20
+          ? "0x0000000000000000000000000000000000000000"
+          : ethers.utils.getAddress(requirement.address)
+      ),
+      ids: requirements.map((requirement) =>
+        requirement.type === TokenType.ERC20
+          ? ethers.BigNumber.from(requirement.address)
+          : requirement.ids
+      ),
+      amounts: requirements.map((requirement) =>
+        requirement.type === TokenType.ERC721
+          ? 1
+          : requirement.type === TokenType.ERC1155
+          ? requirement.amount
+          : ethers.utils.parseUnits(requirement.amount.toString(), 18)
+      ),
+      soulBoundTokenContract: "0x0000000000000000000000000000000000000000",
+      tokenizedRepoName: repositoryName,
+      soulboundBaseURI: metadataCid.url,
+    };
+    try {
+      await registryContract.call(
+        "createTokenizedRepo",
+        repoStruct,
+        messageHash,
+        signedMessage
+      );
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException(
+        "There was an error deploying the repository registry contract"
+      );
+    }
+
     return await RepositoryModel.create({
       name: repo.name,
       description: repo.description,
@@ -173,7 +210,7 @@ class CreateTokenizedRepositoryHandler {
         address: r.address.toLowerCase(),
       })),
       blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
-      metadataIpfsHash: metadataCid,
+      metadataIpfsHash: metadataCid.url,
     });
   }
 
