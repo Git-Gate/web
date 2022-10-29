@@ -14,13 +14,11 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   const {isOpen, open} = useConnectModal();
   const [repo, setRepo] = useState<any>(null);
   const [eLoading, setELoading] = useState(false);
-
-  useEffect(() => {
-    getRepo();
-  }, []);
+  const [notReady, setNotReady] = useState(false);
 
   useEffect(() => {
     if (account.address && !repo) {
+      getRepo();
       setStep(1);
     }
   }, [account]);
@@ -28,12 +26,16 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   const getRepo = async () => {
     const repoRes = await axios.get(`/api/repositories/${params.address}`);
     setRepo(repoRes.data);
+    if (!repoRes.data.soulboundNFTContractAddress) {
+      setNotReady(true);
+    }
     if (account && account.address) {
       setStep(1);
     }
   };
 
   const checkEligibility = async () => {
+    if (eLoading) return;
     try {
       setELoading(true);
       const checkEligibilityRes = await axios.get(
@@ -88,6 +90,15 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   };
 
   const getBody = () => {
+    if (notReady) {
+      return (
+        <div className="flex flex-col items-center space-y-4">
+          <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
+            Repository is not ready yet! Wait a couple of minutes...
+          </h2>
+        </div>
+      );
+    }
     switch (step) {
       case 0:
         return (

@@ -60,26 +60,31 @@ class RepositoryAccessHandler {
         clientSecret: process.env.GITGATE_GITHUB_APP_CLIENT_SECRET as string,
       },
     });
-    // cycle over installation and repos to invite user to the correct repository
-    for await (const {installation} of app.eachInstallation.iterator()) {
-      for await (const {octokit, repository} of app.eachRepository.iterator({
-        installationId: installation.id,
-      })) {
-        if (repository.id === parseInt(repo.githubId)) {
-          await octokit.request(
-            "PUT /repos/{owner}/{repo}/collaborators/{username}",
-            {
-              owner: repo.githubOwner,
-              repo: repo.name,
-              username: user.githubLogin as string,
-            }
-          );
-          /* await RepositoryModel.updateOne(
+    try {
+      // cycle over installation and repos to invite user to the correct repository
+      for await (const {installation} of app.eachInstallation.iterator()) {
+        for await (const {octokit, repository} of app.eachRepository.iterator({
+          installationId: installation.id,
+        })) {
+          if (repository.id === parseInt(repo.githubId)) {
+            await octokit.request(
+              "PUT /repos/{owner}/{repo}/collaborators/{username}",
+              {
+                owner: repo.githubOwner,
+                repo: repo.name,
+                username: user.githubLogin as string,
+              }
+            );
+            /* await RepositoryModel.updateOne(
             {_id: repo._id},
             {memberAddresses: repo.memberAddresses.concat([user.address])}
           );*/
+          }
         }
       }
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException();
     }
     return {message: "OK"};
   }

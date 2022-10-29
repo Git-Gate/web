@@ -39,6 +39,7 @@ export default function Profile({params}: {params: {address: string}}) {
   const [loading, setLoading] = useState(true);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [repositories, setRepositories] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (account.address && !user) getUser();
@@ -113,6 +114,8 @@ export default function Profile({params}: {params: {address: string}}) {
               type={"text"}
               className="bg-white text-black select-none px-4 py-2 rounded-md ring-black focus:ring-2 w-full md:w-1/3 border-black border-2"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
             />
             {isOwnProfile && (
               <div
@@ -125,7 +128,9 @@ export default function Profile({params}: {params: {address: string}}) {
             )}
           </div>
           <hr className="my-4" />
-          {repositories.length === 0 && (
+          {repositories.filter((repo) =>
+            searchQuery ? repo.name.includes(searchQuery) : true
+          ).length === 0 && (
             <div className="text-center mt-8 mx-auto">
               {isOwnProfile && (
                 <svg
@@ -145,7 +150,8 @@ export default function Profile({params}: {params: {address: string}}) {
                 </svg>
               )}
               <h3 className="mt-2 text-md font-medium text-white">
-                No repositories found
+                No repositories found{" "}
+                {searchQuery ? `containing ${searchQuery}` : ""}
               </h3>
               {isOwnProfile && (
                 <>
@@ -165,37 +171,41 @@ export default function Profile({params}: {params: {address: string}}) {
               )}
             </div>
           )}
-          {repositories.map((repository, index) => {
-            return (
-              <div key={index}>
-                <div className="flex flex-col text-white space-y-4">
-                  <div className="flex flex-col space-y-2">
-                    <Link href={`/repositories/${repository._id}`}>
-                      <h3 className="font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline">
-                        {repository.name}
-                      </h3>
-                    </Link>
-                    <h4 className="text-lg text-gray-200">
-                      {repository.description}
-                    </h4>
+          {repositories
+            .filter((repo) =>
+              searchQuery ? repo.name.includes(searchQuery) : true
+            )
+            .map((repository, index) => {
+              return (
+                <div key={index}>
+                  <div className="flex flex-col text-white space-y-4">
+                    <div className="flex flex-col space-y-2">
+                      <Link href={`/repositories/${repository._id}`}>
+                        <h3 className="font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline">
+                          {repository.name}
+                        </h3>
+                      </Link>
+                      <h4 className="text-lg text-gray-200">
+                        {repository.description}
+                      </h4>
+                    </div>
+                    <div className="flex space-x-2">
+                      <span className="inline-flex space-x-2 items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                        <UserGroupIcon className="h-4 w-4 text-black" />
+                        <span>{repository.memberAddresses.length}</span>
+                      </span>
+                      <span className="inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                        {repository.ownerAddress.toLowerCase() ===
+                        user.address.toLowerCase()
+                          ? "owner"
+                          : "member"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <span className="inline-flex space-x-2 items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-                      <UserGroupIcon className="h-4 w-4 text-black" />
-                      <span>{repository.memberAddresses.length}</span>
-                    </span>
-                    <span className="inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-                      {repository.ownerAddress.toLowerCase() ===
-                      user.address.toLowerCase()
-                        ? "owner"
-                        : "member"}
-                    </span>
-                  </div>
+                  <hr className="my-4" />
                 </div>
-                <hr className="my-4" />
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>

@@ -96,6 +96,7 @@ export default function NewRepository() {
   };
 
   const createRepo = async () => {
+    if (tokenizeLoading) return;
     // TODO: change this
     setTokenizeLoading(true);
     const requirements = [];
@@ -145,7 +146,7 @@ export default function NewRepository() {
           "Content-Type": "application/json",
         },
       });
-      setSelectedRepo(newRepo);
+      setSelectedRepo(newRepo.data);
       setSuccess(true);
     } catch (error) {
       console.error(error);

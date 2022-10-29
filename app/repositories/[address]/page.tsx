@@ -3,12 +3,15 @@
 import {
   ArrowPathRoundedSquareIcon,
   ClipboardDocumentIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import {useAccount} from "@web3modal/react";
 import axios from "axios";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
+import NewBlacklistSlide from "../../../components/newBlacklistSlide";
+import NewRequirementSlide from "../../../components/newRequirementSlide";
 import RepoImage from "../../../components/repoImage";
 import {shortenHex} from "../../../utils";
 
@@ -18,6 +21,8 @@ export default function RepoPage({params}: {params: any}) {
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [blacklistOpen, setBlacklistOpen] = useState(false);
   const {push} = useRouter();
 
   useEffect(() => {
@@ -124,11 +129,20 @@ export default function RepoPage({params}: {params: any}) {
       <div className="w-full ml-auto md:w-8/12">
         <div className="flex flex-col items-start justify-start space-y-8 h-screen bg-black py-24 md:py-36 px-8 text-white">
           <div className="flex flex-col">
-            <h3 className="text-xl font-semibold">Requirements</h3>
+            <h3 className="text-xl font-semibold flex items-center space-x-4">
+              <span>Requirements</span>
+              <PlusCircleIcon
+                className="h-6 w-6 cursor-pointer select-none mb-0.5"
+                onClick={() => {
+                  setBlacklistOpen(false);
+                  setOpen(true);
+                }}
+              />
+            </h3>
             {repository.requirements.length === 0 && (
               <p className="mt-2 text-gray-300">No token requirement!</p>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-2 mt-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 mt-2 gap-4">
               {repository.requirements.map((requirement: any) => {
                 if (requirement.type === "erc-20") {
                   return (
@@ -162,7 +176,16 @@ export default function RepoPage({params}: {params: any}) {
             </div>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-xl font-semibold">Blacklist</h3>
+            <h3 className="text-xl font-semibold flex items-center space-x-4">
+              <span>Blacklist</span>
+              <PlusCircleIcon
+                className="h-6 w-6 cursor-pointer select-none mb-0.5"
+                onClick={() => {
+                  setOpen(false);
+                  setBlacklistOpen(true);
+                }}
+              />
+            </h3>
             {repository.blacklistedAddresses.filter(
               (address: string) => address !== ""
             ).length === 0 && (
@@ -184,8 +207,10 @@ export default function RepoPage({params}: {params: any}) {
             </div>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-xl font-semibold">Members</h3>
-            <div className="grid grid-cols-1 mt-2 gap-4">
+            <h3 className="text-xl font-semibold flex items-center space-x-4">
+              <span>Members</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 mt-2 gap-4">
               {repository.memberAddresses.map((address: string) => {
                 return (
                   <span
@@ -200,6 +225,17 @@ export default function RepoPage({params}: {params: any}) {
           </div>
         </div>
       </div>
+
+      <NewRequirementSlide
+        open={open}
+        setOpen={setOpen}
+        submitRequirement={(requirement) => console.log(requirement)}
+      />
+      <NewBlacklistSlide
+        open={blacklistOpen}
+        setOpen={setBlacklistOpen}
+        submitBlacklist={(blacklist) => console.log(blacklist)}
+      />
     </div>
   );
 }
