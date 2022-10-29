@@ -4,6 +4,7 @@ export interface Repository extends Base {
   name: string;
   githubId: string;
   githubUrl: string;
+  githubOwner: string;
   description: string;
   ownerAddress: string;
   memberAddresses: string[];

@@ -7,6 +7,7 @@ const RepositorySchema = new Schema(
     description: String,
     githubUrl: String,
     githubId: String,
+    githubOwner: String,
     ownerAddress: String,
     memberAddresses: [String],
     requirements: Schema.Types.Array,

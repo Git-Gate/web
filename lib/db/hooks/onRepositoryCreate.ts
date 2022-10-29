@@ -1,8 +1,5 @@
 import {ThirdwebSDK} from "@thirdweb-dev/sdk";
-import {generateRepositoryNFTImage} from "../../handlebars";
 import {Repository} from "../interfaces/repository";
-import {initPinata, uploadToPinata} from "../../pinata";
-import {Readable} from "stream";
 import {RepositoryModel} from "../models/repository";
 
 export const onRepositoryCreate = async (data: any) => {
@@ -17,6 +14,11 @@ export const onRepositoryCreate = async (data: any) => {
   const POGMFactoryContract = await sdk.getContract(
     process.env.POGM_CONTRACT_ADDRESS as string
   );
-  await POGMFactoryContract.call("createPOGMToken", [repository._id]);
-  console.log(data);
+  const address = await POGMFactoryContract.call("createPOGMToken", [
+    repository.githubId,
+  ]);
+  await RepositoryModel.updateOne(
+    {_id: repository._id},
+    {$set: {contractAddress: address}}
+  );
 };
