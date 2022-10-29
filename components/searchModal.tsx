@@ -34,7 +34,9 @@ export default function SearchModal({
       ? repos
       : query === "" || rawQuery.startsWith(">")
       ? []
-      : repos.filter((project: any) => project.name.toLowerCase().includes(query));
+      : repos.filter((project: any) =>
+          project.name.toLowerCase().includes(query)
+        );
 
   const filteredUsers =
     rawQuery === ">"
@@ -45,27 +47,28 @@ export default function SearchModal({
 
   useEffect(() => {
     getData();
-  }, [rawQuery])
+  }, [rawQuery]);
 
   const getData = async () => {
-
-    if (rawQuery === ">" || rawQuery.startsWith('>')) {
+    if (rawQuery === ">" || rawQuery.startsWith(">")) {
       // searching users
       try {
         console.log(rawQuery);
-        const usersRes = await axios.get(`/api/users/${rawQuery.replace('%3E', '')}`);
+        const usersRes = await axios.get(
+          `/api/users/${rawQuery.replace("%3E", "")}`
+        );
         setUsers([usersRes.data]);
       } catch (error) {
         setUsers([]);
       }
       setRepos([]);
-    } else if (rawQuery === '#' || rawQuery.startsWith('#')) {
+    } else if (rawQuery === "#" || rawQuery.startsWith("#")) {
       // searching repos
       setUsers([]);
     } else {
       // searching both
     }
-  }
+  };
 
   return (
     <Transition.Root
