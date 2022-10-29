@@ -87,18 +87,24 @@ export default function Navbar() {
   }
 
   return (
-    <div className={`fixed top-0 left-0 w-full py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
+    <div className={`absolute top-0 left-0  py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
       <div className="flex justify-between items-center">
         <div className="flex items-end space-x-8">
           <Link href={"/"}>
             <h4 className="font-bold text-2xl cursor-pointer">GitGate</h4>
           </Link>
-          <div className="flex space-x-4 items-center mb-0.5">
+          <div className="flex space-x-4 items-center mb-1 md:mb-0">
             <h5
-              className="text-md cursor-pointer hover:underline"
+              className="text-sm md:text-lg cursor-pointer hover:underline"
               onClick={() => setShowSearch(true)}
             >
               Search
+            </h5>
+            <h5
+              className="text-sm md:text-lg cursor-pointer hover:underline"
+              onClick={() => setShowSearch(true)}
+            >
+              Docs
             </h5>
           </div>
         </div>
