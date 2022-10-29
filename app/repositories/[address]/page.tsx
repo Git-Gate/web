@@ -1,23 +1,22 @@
 "use client";
 
-import {ClipboardIcon, QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
 import {useAccount} from "@web3modal/react";
 import axios from "axios";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {shortenHex} from "../../../utils";
+import RepoImage from "../../../components/repoImage";
 
 export default function RepoPage({params}: {params: any}) {
   const {account} = useAccount();
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
+  const [error, setError] = useState(false);
   const [githubData, setGithubData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const {push} = useRouter();
 
   useEffect(() => {
-    if (account.address && !repository) getRepository();
+    if (account.address && !repository && !error) getRepository();
   }, [account]);
 
   const getRepository = async () => {
@@ -27,14 +26,13 @@ export default function RepoPage({params}: {params: any}) {
         `/api/repositories/${params.address}`
       );
       setRepository(repositoryRes.data);
-      // const gData = await axios.get(repositoryRes.data.githubUrl);
-      // setGithubData(gData.data);
       setIsOwner(
         repositoryRes.data.ownerAddress.toLowerCase() ===
           account.address.toLowerCase()
       );
     } catch (error) {
       console.error(error);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -70,21 +68,80 @@ export default function RepoPage({params}: {params: any}) {
   }
 
   return (
-    <div className="h-screen flex flex-col py-36 px-8">
-      <div className="flex flex-col md:flex-row space-y-4 space-x-0 md:items-center md:space-x-4 md:space-y-0">
-        <h1 className="text-4xl font-bold">{repository.name}</h1>
-        <button
-          type="button"
-          onClick={() =>
-            navigator.clipboard.writeText(
-              `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
-            )
-          }
-          className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
-        >
-          <span>Copy access link</span>
-        </button>
-        {isOwner && (
+    <div className="relative">
+      <div className="relative inset-0 w-full min-h-screen md:fixed md:w-4/12 bg-indigo-500">
+        <div className="flex flex-col items-center space-y-4 py-36">
+          <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
+          <div className="flex flex-col items-center space-y-4">
+            <h1 className="text-4xl font-bold">{repository.name}</h1>
+            <p className="max-w-sm text-center text-sm">
+              {repository.description}
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
+                )
+              }
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
+            >
+              <span>Copy access link</span>
+            </button>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
+                  )
+                }
+                className="inline-flex items-center justify-center rounded-md border border-red-500 bg-transparent px-4 py-2 text-sm font-medium text-red-500 shadow-sm hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-auto"
+              >
+                <span>Transfer ownership</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="w-full ml-auto md:w-8/12">
+        <div className="flex flex-col items-center h-screen bg-black py-24 md:py-36 px-8 text-black"></div>
+      </div>
+    </div>
+  );
+}
+
+{
+  /*
+
+        <hr className="my-4"/>
+        <h3 className="text-xl font-semibold">Github Information</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-2 gap-4">
+            <div className="flex flex-col">
+                <h4>License - {githubData.license.name}</h4>
+                <h4>Archived - { githubData.archived ? '✅' : '❌'}</h4>
+                <h4>Disabled - { githubData.disabled ? '✅' : '❌'}</h4>
+            </div>
+            <div className="flex flex-col">
+                <h4>Issues - {githubData.open_issues_count}</h4>
+                <h4>Watchers - { githubData.watchers_count}</h4>
+                <h4>Forks - { githubData.forks_count}</h4>
+            </div>
+            <div className="flex flex-col">
+                <h4>Created at - {githubData.created_at}</h4>
+                <h4>Updated at - { githubData.updated_at}</h4>
+                <h4>Pushed at - { githubData.pushed_at}</h4>
+            </div>
+        </div>
+    */
+}
+
+/*
+<div className="h-screen flex flex-col items-center py-36 px-8">
+      <div className="flex flex-col space-y-4">
+        <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
+        <div className="flex flex-col space-y-4">
+          <h1 className="text-4xl font-bold">{repository.name}</h1>
           <button
             type="button"
             onClick={() =>
@@ -92,11 +149,24 @@ export default function RepoPage({params}: {params: any}) {
                 `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
               )
             }
-            className="inline-flex items-center justify-center rounded-md border border-red-500 bg-transparent px-4 py-2 text-sm font-medium text-red-500 shadow-sm hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-auto"
+            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
           >
-            <span>Transfer ownership</span>
+            <span>Copy access link</span>
           </button>
-        )}
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
+                )
+              }
+              className="inline-flex items-center justify-center rounded-md border border-red-500 bg-transparent px-4 py-2 text-sm font-medium text-red-500 shadow-sm hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-auto"
+            >
+              <span>Transfer ownership</span>
+            </button>
+          )}
+        </div>
         <div className="flex flex-grow"></div>
         <div className="flex flex-col">
           <div className="flex items-center justify-between">
@@ -190,30 +260,4 @@ export default function RepoPage({params}: {params: any}) {
         </div>
       </div>
     </div>
-  );
-}
-
-{
-  /*
-
-        <hr className="my-4"/>
-        <h3 className="text-xl font-semibold">Github Information</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-2 gap-4">
-            <div className="flex flex-col">
-                <h4>License - {githubData.license.name}</h4>
-                <h4>Archived - { githubData.archived ? '✅' : '❌'}</h4>
-                <h4>Disabled - { githubData.disabled ? '✅' : '❌'}</h4>
-            </div>
-            <div className="flex flex-col">
-                <h4>Issues - {githubData.open_issues_count}</h4>
-                <h4>Watchers - { githubData.watchers_count}</h4>
-                <h4>Forks - { githubData.forks_count}</h4>
-            </div>
-            <div className="flex flex-col">
-                <h4>Created at - {githubData.created_at}</h4>
-                <h4>Updated at - { githubData.updated_at}</h4>
-                <h4>Pushed at - { githubData.pushed_at}</h4>
-            </div>
-        </div>
-    */
-}
+*/
