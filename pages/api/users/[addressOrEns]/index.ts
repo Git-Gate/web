@@ -8,8 +8,8 @@ import {
 import {isEthereumAddress} from "class-validator";
 import {ethers} from "ethers";
 import type {NextApiRequest} from "next";
-import {connect} from "../../../lib/db";
-import {UserModel} from "../../../lib/db/models/user";
+import {connect} from "../../../../lib/db";
+import {UserModel} from "../../../../lib/db/models/user";
 
 class GetUserHandler {
   @Get()
