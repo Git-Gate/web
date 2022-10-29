@@ -48,8 +48,7 @@ export default function Profile({ params }: { params: { address: string }}) {
             setUser(userRes.data);
             setIsOwnProfile(userRes.data.address.toLowerCase() === account.address.toLowerCase());
             const repositoriesRes = await axios.get(`/api/repositories?memberAddress=${userRes.data.address}`);
-            console.log(repositoriesRes.data);
-            //setRepositories(repositoriesRes.data);
+            setRepositories(repositoriesRes.data);
             setLoading(false);
         } catch (error) {
             console.error(error);
@@ -142,15 +141,15 @@ export default function Profile({ params }: { params: { address: string }}) {
                                     <div className='flex flex-col text-white space-y-4'>
                                     <div className='flex flex-col space-y-2'>
                                         <h3 className='font-bold text-2xl cursor-pointer hover:text-gray-300 hover:underline'>{ repository.name }</h3>
-                                        <h4 className='text-lg text-gray-300'>{ repository.description }</h4>
+                                        <h4 className='text-lg text-gray-200'>{ repository.description }</h4>
                                     </div>
                                     <div className='flex space-x-2'>
                                         <span className="inline-flex space-x-2 items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                                             <UserGroupIcon className='h-4 w-4 text-black' />
-                                            <span>{repository.members}</span>
+                                            <span>{repository.memberAddresses.length}</span>
                                         </span>
                                         <span className="inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-                                            { repository.role }
+                                            { repository.ownerAddress.toLowerCase() === user.address.toLowerCase() ? 'owner' : 'member' }
                                         </span>
                                     </div>
                                 </div>

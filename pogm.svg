@@ -1,6 +1,3 @@
-import { base64 } from "ethers/lib/utils";
-
-const svgImage = `
 <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <style type="text/css">
@@ -60,7 +57,7 @@ const svgImage = `
 <text fill="white" xml:space="preserve" style="white-space: pre" font-family="Space Grotesk" font-size="9.6" font-weight="bold" letter-spacing="0em"><tspan x="161.367" y="251.722">GitGate</tspan></text>
 <text fill="white" xml:space="preserve" style="white-space: pre" font-family="Space Grotesk" font-size="9.6" letter-spacing="0em"><tspan x="104.339" y="251.722">Powered by </tspan></text>
 <text fill="white" xml:space="preserve" style="white-space: pre" font-family="Space Grotesk" font-size="20" font-weight="bold" letter-spacing="0em">
-  <tspan  x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">{REPLACE}</tspan>
+  <tspan  x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">gitgate-frontend</tspan>
 </text>
 </g>
 <defs>
@@ -72,33 +69,3 @@ const svgImage = `
 </clipPath>
 </defs>
 </svg>
-`;
-
-export function shortenHex(hex: string, length = 4) {
-    return `${hex.substring(0, length + 2)}…${hex.substring(
-      hex.length - length
-    )}`;
-}
-
-export const isFlask = async () => {
-  if (typeof window !== 'undefined') {
-    const provider = window.ethereum;
-  
-    try {
-      const clientVersion = await provider?.request({
-        method: 'web3_clientVersion',
-      });
-  
-      const isFlaskDetected = (clientVersion as unknown as string[])?.includes('flask');
-  
-      return Boolean(provider && isFlaskDetected);
-    } catch {
-      return false;
-    }
-  }
-  return false;
-};
-
-export const getSvg = (repoName: string) => {
-  return btoa(svgImage.toString().replace("{REPLACE}", repoName));
-}

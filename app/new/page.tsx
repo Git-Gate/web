@@ -9,12 +9,21 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
 import NewRequirementSlide from "../../components/newRequirementSlide";
 import { toast } from "react-toastify";
+import { useAccount, useContract, useContractWrite, useProvider, useSigner, useSignMessage, useWaitForTransaction } from "@web3modal/react";
+import registryAbi from '../abis/registryAbi.json';
+import { ethers } from "ethers";
+import { NFTStorage, File, Blob } from 'nft.storage'
+import { getSvg } from "../../utils";
+import { toUtf8Bytes } from "ethers/lib/utils";
+
 
 function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function NewRepository() {
+export default function NewRepository() {   
+    const { signMessage } = useSignMessage({ message: '' })
+    const { account, isReady } = useAccount();
     const [selectedRepo, setSelectedRepo] = useState<any>(null);
     const [query, setQuery] = useState('')
     const [open, setOpen] = useState(false);
@@ -88,17 +97,27 @@ export default function NewRepository() {
                 });
             }
         }
-        const data: any = {
+        const apiData: any = {
             repositoryId: selectedRepo.id,
             repositoryName: selectedRepo.name,
             repositoryOwner: selectedRepo.owner.login,
             requirements,
             blacklistedAddresses: blacklistedAddresses.split(','),
+            cid: '',
+            messageHash: '',
+            signedMessage: '',
         };
         try {
-            const createRepoRes = await axios.post(
+            const client = new NFTStorage({ token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY as string });
+            const someData = new File([ getSvg(apiData.repositoryName) ], `${apiData.repositoryName}_${apiData.repositoryOwner}.svg`, { type: 'image/svg' })
+            const cid = await client.storeBlob(someData);
+            apiData.cid = cid;
+            const signedMessage = await signMessage({ message: `${selectedRepo.id}_${account.address}`});
+            apiData.messageHash = ethers.utils.keccak256(toUtf8Bytes(`${selectedRepo.id}_${account.address}`));
+            apiData.signedMessage = signedMessage;
+            await axios.post(
                 `/api/repositories`,
-                data,
+                apiData,
                 { headers: { 'Authorization': `Bearer ${localStorage.getItem('gitgate_token')}`, 'Content-Type': 'application/json'}}
             );
             setSuccess(true);

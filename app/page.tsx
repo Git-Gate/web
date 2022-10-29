@@ -18,7 +18,7 @@ export default function Home() {
           initial={{opacity: 0}}
           animate={{opacity: 0.4}}
           transition={{duration: 1, delay: 0.5}}
-          className="absolute z-10 skew-y-3 motion-safe:animate-wiggle"
+          className="absolute z-10 w-full skew-y-3 motion-safe:animate-wiggle"
           src="/ethereum.png"
           viewport={{once: true}}
         />
@@ -27,7 +27,7 @@ export default function Home() {
           <p>decentralized repo access</p>
         </h1>
         <h2 className="text-xl md:text-2xl text-center text-gray-300 max-w-2xl z-20">
-          Manage your Github repositories and add NFT/token access gates for your open source projects.
+          Token-gate your Github repositories and create Soulbound ERC721Vote tokens.
         </h2>
         <a href="#explore" className="z-20 px-8 py-2 select-none text-md md:text-lg bg-white text-black rounded-md cursor-pointer transition-transform hover:scale-105">
           Start exploring
