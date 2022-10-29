@@ -3,13 +3,15 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 
+const defaultRequirement = {
+  type: 'ERC-20',
+  address: '',
+  amount: 0,
+  ids: []
+};
+
 export default function NewRequirementSlide({ open, setOpen, submitRequirement }: { open: boolean, setOpen: (value: boolean) => void, submitRequirement: (value: any) => void }) {
-    const [newRequirement, setNewRequirement] = useState<any>({
-        type: 'ERC-20',
-        address: '',
-        amount: 0,
-        ids: []
-    });
+    const [newRequirement, setNewRequirement] = useState<any>(defaultRequirement);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -169,6 +171,8 @@ export default function NewRequirementSlide({ open, setOpen, submitRequirement }
                                 className="block w-full text-black bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 min={0}
                                 aria-describedby="tokenAmount-description"
+                                value={newRequirement.amount}
+                                onChange={(event) => setNewRequirement({ ...newRequirement, amount: event.target.value})}
                                 />
                             </div>
                             <p className="mt-2 text-sm text-gray-500" id="tokenAmount-description">
@@ -199,7 +203,7 @@ export default function NewRequirementSlide({ open, setOpen, submitRequirement }
                         Cancel
                       </button>
                       <button
-                        onClick={() => { submitRequirement(newRequirement); setOpen(false); }}
+                        onClick={() => { submitRequirement(newRequirement); setNewRequirement(defaultRequirement); setOpen(false); }}
                         className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       >
                         Save

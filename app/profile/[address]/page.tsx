@@ -76,6 +76,12 @@ export default function Profile({ params }: { params: { address: string }}) {
                 <p className='max-w-sm text-center text-sm'>
                     {user.bio}
                 </p>
+
+                <Link href={`https://github.com/${user.githubLogin}`} target="_blank">
+                    <span className="transition-transform hover:scale-105 inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                        Github
+                    </span>
+                </Link>
                 {/*
                     (account && account.address.toLowerCase() === user.address) && <div className='flex space-x-4 items-center bg-white hover:bg-gray-200 text-black text-sm font-semibold select-none px-4 py-2 cursor-pointer rounded-md'>
                         <CogIcon height={24} width={24} color={'#000000'} />

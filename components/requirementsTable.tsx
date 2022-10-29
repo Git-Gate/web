@@ -65,7 +65,7 @@ export default function RequirementsTable({ onClick, tokenGroups, removeToken, }
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                             {token.address}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{token.amount}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{token.amount || 1}</td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{token.ids.join(',')}</td>
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                             <a className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => removeToken(tokenGroup.type, tokenIdx)}>

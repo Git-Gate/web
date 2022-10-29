@@ -100,16 +100,17 @@ export default function NewRepository() {
         const apiData: any = {
             repositoryId: selectedRepo.id,
             repositoryName: selectedRepo.name,
-            repositoryOwner: selectedRepo.owner.login,
+            repositoryOwner: selectedRepo.owner,
             requirements,
-            blacklistedAddresses: blacklistedAddresses.split(','),
+            blacklistedAddresses: blacklistedAddresses.split(',').filter((address: string) => address !== ''),
             cid: '',
             messageHash: '',
             signedMessage: '',
         };
         try {
-            const signedMessage = await signMessage({ message: `${selectedRepo.id}_${account.address}`});
-            apiData.messageHash = ethers.utils.keccak256(toUtf8Bytes(`${selectedRepo.id}_${account.address}`));
+            const hashedMessage = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${selectedRepo.id}${ethers.utils.getAddress(account.address)}`));
+            const signedMessage = await signMessage({ message: hashedMessage });
+            apiData.messageHash = hashedMessage;
             apiData.signedMessage = signedMessage;
             await axios.post(
                 `/api/repositories`,

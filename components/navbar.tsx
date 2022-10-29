@@ -8,6 +8,7 @@ import axios from "axios";
 import {useRouter} from "next/navigation";
 import SearchModal from "./searchModal";
 import {isFlask, shortenHex} from "../utils";
+import useKeyboardShortcut from 'use-keyboard-shortcut';
 
 export default function Navbar() {
   const {isOpen, open} = useConnectModal();
@@ -16,6 +17,15 @@ export default function Navbar() {
   const {signMessage} = useSignMessage({message: ""});
   const {push} = useRouter();
   const [changeColor, setChangeColor] = useState(false);
+  const { flushHeldKeys } = useKeyboardShortcut(
+    ["Control", "F"],
+    shortcutKeys => setShowSearch(!showSearch),
+    { 
+      overrideSystem: false,
+      ignoreInputFields: false, 
+      repeatOnHold: false 
+    }
+  );
 
   const connectWallet = () => {
     if (!isOpen) open();
@@ -89,7 +99,7 @@ export default function Navbar() {
   return (
     <div className={`fixed top-0 left-0 w-full py-4 px-8 transition-colors ${!changeColor ? 'bg-transparent' : 'bg-black'} z-30`}>
       <div className="flex justify-between items-center">
-        <div className="flex items-end space-x-8">
+        <div className="flex items-end space-x-4 md:space-x-8">
           <Link href={"/"}>
             <h4 className="font-bold text-2xl cursor-pointer">GitGate</h4>
           </Link>

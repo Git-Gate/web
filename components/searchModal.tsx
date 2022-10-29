@@ -1,6 +1,6 @@
 "use client";
 
-import {Fragment, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {Combobox, Dialog, Transition} from "@headlessui/react";
 import {MagnifyingGlassIcon, UserIcon} from "@heroicons/react/20/solid";
 import {
@@ -9,25 +9,7 @@ import {
   LifebuoyIcon,
 } from "@heroicons/react/24/outline";
 import {useRouter} from "next/navigation";
-
-const repos = [
-  {
-    id: 1,
-    name: "Workflow Inc. / Website Redesign",
-    category: "Projects",
-    url: "#",
-  },
-  // More repos...
-];
-
-const users = [
-  {
-    id: 1,
-    name: "orbulo.eth",
-    url: "/profile/0x17030b563C1eef80cf33b065a5D4a4f4F0Ae3186",
-  },
-  // More users...
-];
+import axios from "axios";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -41,6 +23,8 @@ export default function SearchModal({
   setOpen: (value: boolean) => void;
 }) {
   const [rawQuery, setRawQuery] = useState("");
+  const [users, setUsers] = useState<any>([]);
+  const [repos, setRepos] = useState<any>([]);
   const router = useRouter();
 
   const query = rawQuery.toLowerCase().replace(/^[#>]/, "");
@@ -50,14 +34,38 @@ export default function SearchModal({
       ? repos
       : query === "" || rawQuery.startsWith(">")
       ? []
-      : repos.filter((project) => project.name.toLowerCase().includes(query));
+      : repos.filter((project: any) => project.name.toLowerCase().includes(query));
 
   const filteredUsers =
     rawQuery === ">"
       ? users
       : query === "" || rawQuery.startsWith("#")
       ? []
-      : users.filter((user) => user.name.toLowerCase().includes(query));
+      : users.filter((user: any) => user.name.toLowerCase().includes(query));
+
+  useEffect(() => {
+    getData();
+  }, [rawQuery])
+
+  const getData = async () => {
+
+    if (rawQuery === ">" || rawQuery.startsWith('>')) {
+      // searching users
+      try {
+        console.log(rawQuery);
+        const usersRes = await axios.get(`/api/users/${rawQuery.replace('%3E', '')}`);
+        setUsers([usersRes.data]);
+      } catch (error) {
+        setUsers([]);
+      }
+      setRepos([]);
+    } else if (rawQuery === '#' || rawQuery.startsWith('#')) {
+      // searching repos
+      setUsers([]);
+    } else {
+      // searching both
+    }
+  }
 
   return (
     <Transition.Root
@@ -119,7 +127,7 @@ export default function SearchModal({
                           Repositories
                         </h2>
                         <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                          {filteredProjects.map((project) => (
+                          {filteredProjects.map((project: any) => (
                             <Combobox.Option
                               key={project.id}
                               value={project}
@@ -155,7 +163,7 @@ export default function SearchModal({
                           Users
                         </h2>
                         <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                          {filteredUsers.map((user) => (
+                          {filteredUsers.map((user: any) => (
                             <Combobox.Option
                               key={user.id}
                               value={user}
