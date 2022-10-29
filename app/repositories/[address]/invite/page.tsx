@@ -138,7 +138,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               onSuccess={(response: any) => onGithubLoginSuccess(response)}
               onError={(response: any) => console.error(response)}
               clientId="3cab64e37e3e051e028a"
-              scope="read:user"
+              scope="user"
             >
               <button className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 Connect Github
