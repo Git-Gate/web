@@ -16,5 +16,4 @@ export async function connect(): Promise<void> {
       },
     },
   ]).on("change", onRepositoryCreate);
-  console.log("here");
 }

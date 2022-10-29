@@ -10,7 +10,7 @@ export interface Repository extends Base {
   memberAddresses: string[];
   requirements: RepositoryTokenRequirement[];
   blacklistedAddresses: string[];
-  contractAddress?: string;
+  soulboundNFTContractAddress?: string;
   imageIpfsHash?: string;
 }
 
