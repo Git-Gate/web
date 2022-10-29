@@ -83,7 +83,7 @@ export default function Connect() {
             onSuccess={(response: any) => onGithubLoginSuccess(response)}
             onError={(response: any) => onGithubLoginError(response)}
             clientId="3cab64e37e3e051e028a"
-            scope="read:user"
+            scope="user"
           />
         </div>
       </div>

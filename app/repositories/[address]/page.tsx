@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  ArrowPathRoundedSquareIcon,
+  ClipboardDocumentIcon,
+  TrashIcon,
+} from "@heroicons/react/20/solid";
 import {useAccount} from "@web3modal/react";
 import axios from "axios";
 import {useRouter} from "next/navigation";
@@ -84,8 +89,9 @@ export default function RepoPage({params}: {params: any}) {
                   `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
                 )
               }
-              className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform md:w-full"
             >
+              <ClipboardDocumentIcon className="h-4 mr-2" />
               <span>Copy access link</span>
             </button>
             {isOwner && (
@@ -96,8 +102,9 @@ export default function RepoPage({params}: {params: any}) {
                     `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
                   )
                 }
-                className="inline-flex items-center justify-center rounded-md border border-red-500 bg-transparent px-4 py-2 text-sm font-medium text-red-500 shadow-sm hover:border-red-700 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-auto"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 md:w-full"
               >
+                <ArrowPathRoundedSquareIcon className="h-4 mr-2" />
                 <span>Transfer ownership</span>
               </button>
             )}

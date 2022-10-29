@@ -122,12 +122,14 @@ export default function Navbar() {
             >
               Search
             </h5>
-            <h5
-              className="text-sm md:text-lg cursor-pointer hover:underline"
-              onClick={() => setShowSearch(true)}
+            <Link
+              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              target={"_blank"}
             >
-              Docs
-            </h5>
+              <h5 className="text-sm md:text-lg cursor-pointer hover:underline">
+                Docs
+              </h5>
+            </Link>
           </div>
         </div>
         <div className="flex space-x-4 items-center">

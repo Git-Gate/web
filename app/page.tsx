@@ -55,7 +55,10 @@ export default function Home() {
               Define the tokens needed to access your repositories and grant
               roles based on on-chain data.
             </h2>
-            <Link href="/">
+            <Link
+              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              target={"_blank"}
+            >
               <div className="z-20 mt-4 px-8 py-2 select-none text-md md:text-lg bg-black text-white rounded-md cursor-pointer transition-transform hover:scale-105">
                 View the docs
               </div>
@@ -87,7 +90,10 @@ export default function Home() {
               A Soulbound ERC721Vote for your contributors to explore new
               governance horizons.
             </h2>
-            <Link href="/">
+            <Link
+              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              target={"_blank"}
+            >
               <div className="z-20 mt-4 px-8 py-2 select-none text-md md:text-lg bg-white text-black rounded-md cursor-pointer transition-transform hover:scale-105">
                 View the docs
               </div>
