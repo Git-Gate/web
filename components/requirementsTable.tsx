@@ -14,7 +14,7 @@ export default function RequirementsTable({
   removeToken: (type: string, idx: number) => void;
 }) {
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h2 className="text-2xl font-semibold text-white">

@@ -326,7 +326,7 @@ export default function NewRepository() {
                 />
               </div>
             </div>
-            <div className="mt-4 md:mt-0 md:ml-8 md:flex-none">
+            <div className="mt-4 md:mt-0 md:ml-8 md:flex-none flex items-center justify-center md:justify-start">
               <button
                 onClick={() => createRepo()}
                 type="button"
