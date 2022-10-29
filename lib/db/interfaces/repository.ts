@@ -11,7 +11,7 @@ export interface Repository extends Base {
   requirements: RepositoryTokenRequirement[];
   blacklistedAddresses: string[];
   soulboundNFTContractAddress?: string;
-  imageIpfsHash?: string;
+  metadataIpfsHash?: string;
 }
 
 export interface RepositoryTokenRequirement {

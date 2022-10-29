@@ -80,6 +80,10 @@ class RepositoryAccessHandler {
               username: user.githubLogin as string,
             }
           );
+          /* await RepositoryModel.updateOne(
+            {_id: repo._id},
+            {memberAddresses: repo.memberAddresses.concat([user.address])}
+          );*/
         }
       }
     }
