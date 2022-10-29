@@ -3,14 +3,12 @@
 import {
   ArrowPathRoundedSquareIcon,
   ClipboardDocumentIcon,
-  TrashIcon,
 } from "@heroicons/react/20/solid";
 import {useAccount} from "@web3modal/react";
 import axios from "axios";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import LoginGithub from "react-login-github";
 import RepoImage from "../../../components/repoImage";
 import {shortenHex} from "../../../utils";
 
@@ -19,7 +17,6 @@ export default function RepoPage({params}: {params: any}) {
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
-  const [githubData, setGithubData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const {push} = useRouter();
 
@@ -45,6 +42,8 @@ export default function RepoPage({params}: {params: any}) {
       setLoading(false);
     }
   };
+
+  const connectGitGate = async () => {};
 
   if (loading) {
     return (
@@ -112,17 +111,11 @@ export default function RepoPage({params}: {params: any}) {
               </button>
             )}
             {isOwner && (
-              <div className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full">
-                <LoginGithub
-                  onSuccess={(response: any) => console.log(response)}
-                  onError={(response: any) => console.log(response)}
-                  clientId={
-                    process.env.NEXT_PUBLIC_GITGATE_GITHUB_APP_CLIENT_ID || ""
-                  }
-                  scope="repo"
-                >
-                  Connect GitGate
-                </LoginGithub>
+              <div
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
+                onClick={() => connectGitGate()}
+              >
+                Connect GitGate
               </div>
             )}
           </div>
