@@ -5,10 +5,12 @@ import {soulboundFactoryContractAbi} from "../../smart-contract-abis";
 import {ethers} from "ethers";
 
 export const onRepositoryCreate = async (data: any) => {
+  console.log("[onRepositoryCreate] Start");
   const repository: Repository = data.fullDocument;
   if (!repository) {
     throw new Error("Error in onRepositoryCreate");
   }
+  console.log("[onRepositoryCreate] Initializing Thirdweb SDK");
   const sdk = ThirdwebSDK.fromPrivateKey(
     process.env.GIT_GATE_WALLET_PVT_KEY as string,
     "mumbai",
@@ -21,11 +23,15 @@ export const onRepositoryCreate = async (data: any) => {
   POGMFactoryContract.interceptor.overrideNextTransaction(() => ({
     gasLimit: 3000000,
   }));
+  console.log(
+    "[onRepositoryCreate] Contract ready! Now calling factory method..."
+  );
   try {
     const address = await POGMFactoryContract.call(
       "createPOGMToken",
       repository.githubId
     );
+    console.log("[onRepositoryCreate] Soulbound NFT Contract created");
     const soulboundCreatedLog = address.receipt.logs.filter(
       (log: {topics: string | string[]}) =>
         log.topics.includes(
