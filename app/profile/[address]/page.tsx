@@ -75,7 +75,7 @@ export default function Profile({params}: {params: {address: string}}) {
   return (
     <div className="relative">
       <div className="relative inset-0 w-full min-h-screen md:fixed md:w-4/12">
-        <div className="flex flex-col items-center space-y-4 py-36">
+        <div className="flex flex-col min-h-screen justify-center items-center space-y-4 py-36">
           <img
             alt="User profile"
             className="rounded-full h-48 w-48"
@@ -94,6 +94,12 @@ export default function Profile({params}: {params: {address: string}}) {
               Github
             </span>
           </Link>
+          <a
+            href="#repos"
+            className="mt-24 hover:underline animate-pulse cursor-pointer"
+          >
+            View repositories
+          </a>
           {/*
                     (account && account.address.toLowerCase() === user.address) && <div className='flex space-x-4 items-center bg-white hover:bg-gray-200 text-black text-sm font-semibold select-none px-4 py-2 cursor-pointer rounded-md'>
                         <CogIcon height={24} width={24} color={'#000000'} />
@@ -102,7 +108,7 @@ export default function Profile({params}: {params: {address: string}}) {
                     */}
         </div>
       </div>
-      <div className="w-full ml-auto md:w-8/12">
+      <div id="repos" className="w-full ml-auto md:w-8/12">
         <div className="flex flex-col h-screen bg-indigo-500 py-24 md:py-36 px-8 text-black">
           <h2 className="mb-5 text-4xl font-bold">
             {isOwnProfile

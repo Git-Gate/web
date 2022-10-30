@@ -933,7 +933,7 @@ export default function RepoPage({params}: {params: any}) {
         </div>
       </div>
       <div className="w-full ml-auto md:w-8/12">
-        <div className="flex flex-col items-start justify-start space-y-8 h-screen bg-black py-24 md:py-36 px-8 text-white">
+        <div className="flex flex-col items-start justify-center space-y-8 h-screen bg-black py-24 md:py-36 px-8 text-white">
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">
               <span>Requirements</span>

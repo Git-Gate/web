@@ -51,7 +51,7 @@ export default function Home() {
               On-chain requirements verification
             </h1>
             <h2 className="text-xl md:text-2xl text-center text-gray-700 max-w-2xl z-20">
-              Define the tokens needed to access your repositories and invite
+              Define requirements to access your repositories and invite
               collaborators based on on-chain requirements.
             </h2>
             <Link
