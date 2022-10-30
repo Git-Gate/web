@@ -5,8 +5,9 @@ import {
   ClipboardDocumentIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
-import {useAccount, useContract} from "@web3modal/react";
+import {useAccount, useContract, useSigner} from "@web3modal/react";
 import axios from "axios";
+import {ethers} from "ethers";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
@@ -498,6 +499,77 @@ const registryABI = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "getRequirements",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "githubRepoId",
+            type: "uint256",
+          },
+          {
+            internalType: "address[]",
+            name: "operators",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "op",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address[]",
+            name: "blacklistedAddresses",
+            type: "address[]",
+          },
+          {
+            internalType: "address[]",
+            name: "collections",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "ids",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "amounts",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address",
+            name: "soulBoundTokenContract",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "tokenizedRepoName",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "soulboundBaseURI",
+            type: "string",
+          },
+        ],
+        internalType: "struct POGMRegistry.RepositoryRequirements",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -750,10 +822,7 @@ const registryABI = [
 
 export default function RepoPage({params}: {params: any}) {
   const {account} = useAccount();
-  const {contract} = useContract({
-    abi: registryABI,
-    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as string,
-  });
+  const {data, refetch} = useSigner();
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
@@ -766,7 +835,43 @@ export default function RepoPage({params}: {params: any}) {
     if (account.address && !repository && !error) getRepository();
   }, [account]);
 
-  const addNewRequirement = async (requirement: any) => {};
+  const addNewRequirement = async (requirement: any) => {
+    const signed = await refetch();
+    const contract = new ethers.Contract(
+      process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as string,
+      registryABI,
+      data
+    );
+    contract.connect(data!);
+    const requirements = await contract.getRequirements(repository.githubId);
+    console.log(requirements);
+    const {githubRepoId, collections, ids, amounts} = requirements;
+    console.log(requirement);
+    const newCollections = [...collections];
+    const newIds = [...ids];
+    const newAmounts = [...amounts];
+    ids.map((id: string) => {
+      newCollections.push(
+        requirement.type === "ERC-20"
+          ? "0x0000000000000000000000000000000000000000"
+          : requirement.address
+      );
+      newIds.push(
+        requirement.type === "ERC-20"
+          ? ethers.BigNumber.from(requirement.address)
+          : parseInt(id)
+      );
+      newAmounts.push(requirement.amount);
+    });
+    const requirementRes = await contract!.functions.changeRequirements(
+      githubRepoId,
+      newCollections,
+      newIds,
+      newAmounts
+    );
+    console.log(requirementRes);
+    await getRepository();
+  };
 
   const getRepository = async () => {
     setLoading(true);
@@ -832,7 +937,7 @@ export default function RepoPage({params}: {params: any}) {
               type="button"
               onClick={() =>
                 navigator.clipboard.writeText(
-                  `https://web-gitgate.vercel.app/invite?repoId=${repository._id}`
+                  `https://web-gitgate.vercel.app/invite/repo?repoId=${repository._id}`
                 )
               }
               className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform w-full"
