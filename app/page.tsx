@@ -24,11 +24,11 @@ export default function Home() {
         />
         <h1 className="text-4xl md:text-6xl text-center font-extrabold z-20">
           <p>The home for</p>
-          <p>decentralized repo access</p>
+          <p>decentralized repo access control</p>
         </h1>
         <h2 className="text-xl md:text-2xl text-center text-gray-300 max-w-2xl z-20">
           Token-gate your Github repositories and create Soulbound ERC721Vote
-          tokens.
+          tokens to govern them.
         </h2>
         <a
           href="#explore"
