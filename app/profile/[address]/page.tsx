@@ -88,12 +88,22 @@ export default function Profile({params}: {params: {address: string}}) {
             {user.ensLabel || shortenHex(user.address, 4)}
           </h3>
           <p className="max-w-sm text-center text-sm">{user.bio}</p>
+          <div className="flex items-center justify-center space-x-2">
+            <Link
+              href={`https://github.com/${user.githubLogin}`}
+              target="_blank"
+            >
+              <span className="transition-transform hover:scale-105 inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                Github
+              </span>
+            </Link>
 
-          <Link href={`https://github.com/${user.githubLogin}`} target="_blank">
-            <span className="transition-transform hover:scale-105 inline-flex items-center cursor-pointer select-none rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-              Github
-            </span>
-          </Link>
+            <Link href={`https://testnets.opensia.io/account`} target="_blank">
+              <span className="transition-transform hover:scale-105 inline-flex items-center cursor-pointer select-none rounded-md bg-blue-500 px-2.5 py-0.5 text-sm font-medium text-white">
+                OpenSea
+              </span>
+            </Link>
+          </div>
           <a
             href="#repos"
             className="block md:hidden mt-24 hover:underline animate-pulse cursor-pointer"

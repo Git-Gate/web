@@ -3,6 +3,7 @@
 import {
   ArrowPathRoundedSquareIcon,
   ClipboardDocumentIcon,
+  GlobeEuropeAfricaIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import {useAccount, useContract, useSigner} from "@web3modal/react";
@@ -907,14 +908,22 @@ export default function RepoPage({params}: {params: any}) {
               <ClipboardDocumentIcon className="h-4 mr-2" />
               <span>Copy access link</span>
             </button>
+            <Link
+              href={`https://testnets.opensea.io/collection/proofofgithubmembership-${repository.name}`}
+              target={"_blank"}
+              className="w-full"
+            >
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform w-full"
+              >
+                <GlobeEuropeAfricaIcon className="h-4 mr-2" />
+                <span>View on OpenSea</span>
+              </button>
+            </Link>
             {isOwner && (
               <button
                 type="button"
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    `https://web-gitgate.vercel.app/repositories?repoId=${repository._id}`
-                  )
-                }
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full"
               >
                 <ArrowPathRoundedSquareIcon className="h-4 mr-2" />
@@ -931,7 +940,7 @@ export default function RepoPage({params}: {params: any}) {
             )}
             <a
               href="#requirements"
-              className="block md:hidden mt-24 hover:underline animate-pulse cursor-pointer"
+              className="block sm:hidden mt-24 hover:underline animate-pulse cursor-pointer"
             >
               View requirements
             </a>
@@ -956,7 +965,7 @@ export default function RepoPage({params}: {params: any}) {
             {repository.requirements.length === 0 && (
               <p className="mt-2 text-gray-300">No token requirement!</p>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-3 mt-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 mt-2 gap-4">
               {repository.requirements.map((requirement: any) => {
                 if (requirement.type === "erc-20") {
                   return (
@@ -964,12 +973,10 @@ export default function RepoPage({params}: {params: any}) {
                       href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
                       target={"_blank"}
                     >
-                      <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
-                        <span className="text-xs">
-                          {requirement.amount} {shortenHex(requirement.address)}{" "}
-                          - {requirement.type.toUpperCase()}
-                        </span>
-                      </div>
+                      <span className="inline-flex items-center text-center rounded-lg bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                        Amount: {requirement.amount} -{" "}
+                        {shortenHex(requirement.address)}
+                      </span>
                     </Link>
                   );
                 }
@@ -978,12 +985,11 @@ export default function RepoPage({params}: {params: any}) {
                     href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
                     target={"_blank"}
                   >
-                    <div className="bg-white transition-transform hover:scale-105 px-4 py-2 rounded-lg text-black select-none cursor-pointer flex items-center justify-center">
-                      <span className="text-xs">
-                        {shortenHex(requirement.address)} -{" "}
-                        {requirement.type.toUpperCase()}
-                      </span>
-                    </div>
+                    <span className="inline-flex items-center text-center rounded-lg bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                      Amount: {requirement.amount} - IDs:{" "}
+                      {requirement.ids.join(", ")} -{" "}
+                      {shortenHex(requirement.address)}
+                    </span>
                   </Link>
                 );
               })}
