@@ -131,7 +131,7 @@ class CreateTokenizedRepositoryHandler {
       token: process.env.NFT_STORAGE_API_KEY as string,
     });
     const imageFile = new File(
-      [getSvg(repositoryName)],
+      [Buffer.from(getSvg(repositoryName), "base64")],
       `${repositoryName}_${repositoryOwner}.svg`,
       {type: "image/svg+xml"}
     );
@@ -141,9 +141,10 @@ class CreateTokenizedRepositoryHandler {
       image: imageFile,
       attributes: {
         Name: repositoryName,
+        Url: repo.url,
       },
     });
-
+    console.log(metadataCid);
     const originalUserAddress = ethers.utils.getAddress(user.address);
     const repoStruct = {
       githubRepoId: repositoryId,
