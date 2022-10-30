@@ -892,7 +892,14 @@ export default function RepoPage({params}: {params: any}) {
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4 py-36 px-4">
           <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
           <div className="flex flex-col items-center space-y-4">
-            <h1 className="text-4xl font-bold">{repository.name}</h1>
+            <Link
+              href={`https://github.com/${repository.githubOwner}/${repository.name}`}
+              target={"_blank"}
+            >
+              <h1 className="text-4xl font-bold hover:underline">
+                {repository.name}
+              </h1>
+            </Link>
             <p className="max-w-sm text-center text-sm">
               {repository.description}
             </p>
