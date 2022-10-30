@@ -56,7 +56,7 @@ export default function Home() {
               roles based on on-chain data.
             </h2>
             <Link
-              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              href="https://seasoned-eocursor-e4d.notion.site/Registry-d7df5f6567804e1db1bdf173f28720bf"
               target={"_blank"}
             >
               <div className="z-20 mt-4 px-8 py-2 select-none text-md md:text-lg bg-black text-white rounded-md cursor-pointer transition-transform hover:scale-105">
@@ -91,7 +91,7 @@ export default function Home() {
               governance horizons.
             </h2>
             <Link
-              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              href="https://seasoned-eocursor-e4d.notion.site/POGM-token-c77e88a3f448448281732836f8738edd"
               target={"_blank"}
             >
               <div className="z-20 mt-4 px-8 py-2 select-none text-md md:text-lg bg-white text-black rounded-md cursor-pointer transition-transform hover:scale-105">
