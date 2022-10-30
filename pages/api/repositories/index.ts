@@ -144,7 +144,6 @@ class CreateTokenizedRepositoryHandler {
         Url: repo.url,
       },
     });
-    console.log(metadataCid);
     const originalUserAddress = ethers.utils.getAddress(user.address);
     const repoStruct = {
       githubRepoId: repositoryId,
@@ -199,7 +198,7 @@ class CreateTokenizedRepositoryHandler {
       githubId: repo.id,
       githubOwner: repositoryOwner,
       ownerAddress: user.address,
-      memberAddresses: [user.address],
+      memberAddresses: [],
       requirements: requirements.map((r) => ({
         ...r,
         address: r.address.toLowerCase(),
@@ -214,28 +213,46 @@ class CreateTokenizedRepositoryHandler {
     @Req() req: NextApiRequest,
     @Query("ownerAddress") ownerAddress: string,
     @Query("name") name: string,
+    @Query("text") text: string,
     @Query("memberAddress") memberAddress: string,
     @Query("page") page: number,
     @Query("limit") limit: number
   ) {
     const findObj: any = {};
+    if (text) {
+      findObj["$text"] = {
+        $search: text,
+      };
+    }
     if (ownerAddress) {
       findObj["ownerAddress"] = ownerAddress.toLowerCase();
     }
     if (memberAddress) {
       findObj["memberAddresses"] = memberAddress.toLowerCase();
     }
-    if (name) {
-      findObj["name"] = {
-        $regex: name,
-      };
-    }
     const skip = (page || 0) * (limit || 10);
-    return RepositoryModel.find(
-      findObj,
-      {},
-      {skip, limit: limit ? parseInt(String(limit), 10) : 10}
-    );
+    console.log(findObj);
+    return await RepositoryModel.aggregate([
+      {
+        $match: findObj,
+      },
+      /* {
+        $search: {
+          index: "default-repositories", // optional, defaults to "default"
+          text: {
+            query: text,
+            path: name,
+            fuzzy: 2,
+          },
+        },
+      },*/
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit ? parseInt(String(limit), 10) : 10,
+      },
+    ]).exec();
   }
 }
 

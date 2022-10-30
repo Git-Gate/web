@@ -137,7 +137,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               Check if you are eligible for an invite
             </h2>
             <div className="flex items-center justify-center space-x-2">
-              {/* repo.requirements.map((requirement: any, index: number) => {
+              {repo.requirements.map((requirement: any, index: number) => {
                 if (requirement.type === "erc-20") {
                   return (
                     <Link
@@ -164,7 +164,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
                     </span>
                   </Link>
                 );
-              })*/}
+              })}
             </div>
             <button
               onClick={() => checkEligibility()}
