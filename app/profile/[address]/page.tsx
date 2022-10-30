@@ -84,9 +84,14 @@ export default function Profile({params}: {params: {address: string}}) {
               "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp"
             }
           />
-          <h3 className="font-bold text-2xl">
-            {user.ensLabel || shortenHex(user.address, 4)}
-          </h3>
+          <Link
+            href={`https://mumbai.polygonscan.com/address/${user.address}`}
+            target={"_blank"}
+          >
+            <h3 className="font-bold text-2xl hover:underline cursor-pointer">
+              {user.ensLabel || shortenHex(user.address, 4)}
+            </h3>
+          </Link>
           <p className="max-w-sm text-center text-sm">{user.bio}</p>
           <div className="flex items-center justify-center space-x-2">
             <Link
@@ -98,7 +103,10 @@ export default function Profile({params}: {params: {address: string}}) {
               </span>
             </Link>
 
-            <Link href={`https://testnets.opensia.io/account`} target="_blank">
+            <Link
+              href={`https://testnets.opensea.io/${user.address}`}
+              target="_blank"
+            >
               <span className="transition-transform hover:scale-105 inline-flex items-center cursor-pointer select-none rounded-md bg-blue-500 px-2.5 py-0.5 text-sm font-medium text-white">
                 OpenSea
               </span>
