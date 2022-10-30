@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Put,
   Req,
+  UnauthorizedException,
   ValidationPipe,
 } from "next-api-decorators";
 import type {NextApiRequest} from "next";
@@ -13,7 +14,8 @@ import {Type} from "class-transformer";
 import {connect} from "../../../../lib/db";
 import {RepositoryModel} from "../../../../lib/db/models/repository";
 import {JwtAuthGuard} from "../../../../lib/middlewares";
-import {CreateTokenizedRepositoryDTO, TokenRequirement} from "../index";
+import {TokenRequirement} from "../index";
+import {Repository} from "../../../../lib/db/interfaces/repository";
 
 export class UpdateTokenizedRepositoryDTO {
   @Type(() => TokenRequirement)
@@ -47,9 +49,15 @@ class RepositoriesHandler {
     await connect();
     const {id} = req.query;
     const {requirements, blacklistedAddresses} = body;
-    const repository = await RepositoryModel.findById(id);
+    const repository = (await RepositoryModel.findById(id)) as Repository;
     if (!repository) {
       throw new NotFoundException("Repository not found.");
+    }
+    const user = req.user;
+    if (repository.ownerAddress === user?.address) {
+      throw new UnauthorizedException(
+        "Cannot update a repository that you don't own."
+      );
     }
     return RepositoryModel.updateOne(
       {_id: id},
