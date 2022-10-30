@@ -211,48 +211,23 @@ class CreateTokenizedRepositoryHandler {
   @Get()
   public async getList(
     @Req() req: NextApiRequest,
-    @Query("ownerAddress") ownerAddress: string,
-    @Query("name") name: string,
-    @Query("text") text: string,
-    @Query("memberAddress") memberAddress: string,
+    @Query("walletAddress") walletAddress: string,
     @Query("page") page: number,
     @Query("limit") limit: number
   ) {
     const findObj: any = {};
-    if (text) {
-      findObj["$text"] = {
-        $search: text,
-      };
-    }
-    if (ownerAddress) {
-      findObj["ownerAddress"] = ownerAddress.toLowerCase();
-    }
-    if (memberAddress) {
-      findObj["memberAddresses"] = memberAddress.toLowerCase();
+    if (walletAddress) {
+      findObj["$or"] = [
+        {memberAddresses: walletAddress.toLowerCase()},
+        {ownerAddress: walletAddress.toLowerCase()},
+      ];
     }
     const skip = (page || 0) * (limit || 10);
-    console.log(findObj);
-    return await RepositoryModel.aggregate([
-      {
-        $match: findObj,
-      },
-      /* {
-        $search: {
-          index: "default-repositories", // optional, defaults to "default"
-          text: {
-            query: text,
-            path: name,
-            fuzzy: 2,
-          },
-        },
-      },*/
-      {
-        $skip: skip,
-      },
-      {
-        $limit: limit ? parseInt(String(limit), 10) : 10,
-      },
-    ]).exec();
+    return RepositoryModel.find(
+      findObj,
+      {},
+      {skip, limit: limit ? parseInt(String(limit), 10) : 10}
+    );
   }
 }
 
