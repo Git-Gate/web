@@ -835,44 +835,6 @@ export default function RepoPage({params}: {params: any}) {
     if (account.address && !repository && !error) getRepository();
   }, [account]);
 
-  const addNewRequirement = async (requirement: any) => {
-    const signed = await refetch();
-    const contract = new ethers.Contract(
-      process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as string,
-      registryABI,
-      data
-    );
-    contract.connect(data!);
-    const requirements = await contract.getRequirements(repository.githubId);
-    console.log(requirements);
-    const {githubRepoId, collections, ids, amounts} = requirements;
-    console.log(requirement);
-    const newCollections = [...collections];
-    const newIds = [...ids];
-    const newAmounts = [...amounts];
-    ids.map((id: string) => {
-      newCollections.push(
-        requirement.type === "ERC-20"
-          ? "0x0000000000000000000000000000000000000000"
-          : requirement.address
-      );
-      newIds.push(
-        requirement.type === "ERC-20"
-          ? ethers.BigNumber.from(requirement.address)
-          : parseInt(id)
-      );
-      newAmounts.push(requirement.amount);
-    });
-    const requirementRes = await contract!.functions.changeRequirements(
-      githubRepoId,
-      newCollections,
-      newIds,
-      newAmounts
-    );
-    console.log(requirementRes);
-    await getRepository();
-  };
-
   const getRepository = async () => {
     setLoading(true);
     try {
@@ -959,7 +921,7 @@ export default function RepoPage({params}: {params: any}) {
                 <span>Transfer ownership</span>
               </button>
             )}
-            {isOwner && (
+            {false && (
               <div
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
                 onClick={() => connectGitGate()}
@@ -975,13 +937,15 @@ export default function RepoPage({params}: {params: any}) {
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">
               <span>Requirements</span>
-              <PlusCircleIcon
+              {/*
+                  <PlusCircleIcon
                 className="h-6 w-6 cursor-pointer select-none mb-0.5"
                 onClick={() => {
                   setBlacklistOpen(false);
                   setOpen(true);
                 }}
               />
+                */}
             </h3>
             {repository.requirements.length === 0 && (
               <p className="mt-2 text-gray-300">No token requirement!</p>
@@ -1022,13 +986,13 @@ export default function RepoPage({params}: {params: any}) {
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">
               <span>Blacklist</span>
-              <PlusCircleIcon
+              {/* <PlusCircleIcon
                 className="h-6 w-6 cursor-pointer select-none mb-0.5"
                 onClick={() => {
                   setOpen(false);
                   setBlacklistOpen(true);
                 }}
-              />
+              />*/}
             </h3>
             {repository.blacklistedAddresses.filter(
               (address: string) => address !== ""
@@ -1070,7 +1034,7 @@ export default function RepoPage({params}: {params: any}) {
         </div>
       </div>
 
-      <NewRequirementSlide
+      {/* <NewRequirementSlide
         open={open}
         setOpen={setOpen}
         submitRequirement={(requirement) => addNewRequirement(requirement)}
@@ -1079,7 +1043,7 @@ export default function RepoPage({params}: {params: any}) {
         open={blacklistOpen}
         setOpen={setBlacklistOpen}
         submitBlacklist={(blacklist) => console.log(blacklist)}
-      />
+      /> */}
     </div>
   );
 }
