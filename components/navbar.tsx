@@ -53,13 +53,13 @@ export default function Navbar() {
 
   const signUp = async () => {
     try {
-      if (searchParams.get("repoId")) return;
       if (
         typeof window !== undefined &&
         !localStorage.getItem("gitgate_token")
       ) {
         const isNewUser = await registerGitgateToken();
-        if (isNewUser) push(`/connect/${account.address}`);
+        if (isNewUser && !searchParams.get("repoId"))
+          push(`/connect/${account.address}`);
       } else {
         try {
           const meRes = await axios.get("/api/users/me", {
@@ -74,13 +74,15 @@ export default function Navbar() {
           ) {
             localStorage.removeItem("gitgate_token");
             const isNewUser = await registerGitgateToken();
-            if (isNewUser) push(`/connect/${account.address}`);
+            if (isNewUser && !searchParams.get("repoId"))
+              push(`/connect/${account.address}`);
           }
         } catch (error) {
           console.log("here");
           console.log(error);
           const isNewUser = await registerGitgateToken();
-          if (isNewUser) push(`/connect/${account.address}`);
+          if (isNewUser && !searchParams.get("repoId"))
+            push(`/connect/${account.address}`);
         }
       }
     } catch (error) {
