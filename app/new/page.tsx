@@ -184,7 +184,7 @@ export default function NewRepository() {
               name="text"
               id="url"
               className="block w-full rounded-none rounded-l-md border-gray-300 pl-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder={`https://web-gitgate.vercel.app/invite?repoId=${selectedRepo._id}`}
+              placeholder={`https://web-gitgate.vercel.app/invite/repo?repoId=${selectedRepo._id}`}
             />
           </div>
           <button
@@ -192,7 +192,7 @@ export default function NewRepository() {
             className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             onClick={() =>
               navigator.clipboard.writeText(
-                `https://web-gitgate.vercel.app/invite?repoId=${selectedRepo._id}`
+                `https://web-gitgate.vercel.app/invite/repo?repoId=${selectedRepo._id}`
               )
             }
           >
@@ -299,14 +299,16 @@ export default function NewRepository() {
                     Comma separated value format.
                   </p>
                 </div>
-                <div className="mt-4 md:mt-0 md:ml-16 md:flex-none">
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
-                  >
-                    Upload CSV
-                  </button>
-                </div>
+                {false && (
+                  <div className="mt-4 md:mt-0 md:ml-16 md:flex-none">
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 md:w-auto"
+                    >
+                      Upload CSV
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="mt-4">
                 <textarea

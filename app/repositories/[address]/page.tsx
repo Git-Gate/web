@@ -5,8 +5,9 @@ import {
   ClipboardDocumentIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
-import {useAccount, useContract} from "@web3modal/react";
+import {useAccount, useContract, useSigner} from "@web3modal/react";
 import axios from "axios";
+import {ethers} from "ethers";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
@@ -498,6 +499,77 @@ const registryABI = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "getRequirements",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "githubRepoId",
+            type: "uint256",
+          },
+          {
+            internalType: "address[]",
+            name: "operators",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "op",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address[]",
+            name: "blacklistedAddresses",
+            type: "address[]",
+          },
+          {
+            internalType: "address[]",
+            name: "collections",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "ids",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "amounts",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address",
+            name: "soulBoundTokenContract",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "tokenizedRepoName",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "soulboundBaseURI",
+            type: "string",
+          },
+        ],
+        internalType: "struct POGMRegistry.RepositoryRequirements",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -750,10 +822,7 @@ const registryABI = [
 
 export default function RepoPage({params}: {params: any}) {
   const {account} = useAccount();
-  const {contract} = useContract({
-    abi: registryABI,
-    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as string,
-  });
+  const {data, refetch} = useSigner();
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
@@ -765,8 +834,6 @@ export default function RepoPage({params}: {params: any}) {
   useEffect(() => {
     if (account.address && !repository && !error) getRepository();
   }, [account]);
-
-  const addNewRequirement = async (requirement: any) => {};
 
   const getRepository = async () => {
     setLoading(true);
@@ -832,7 +899,7 @@ export default function RepoPage({params}: {params: any}) {
               type="button"
               onClick={() =>
                 navigator.clipboard.writeText(
-                  `https://web-gitgate.vercel.app/invite?repoId=${repository._id}`
+                  `https://web-gitgate.vercel.app/invite/repo?repoId=${repository._id}`
                 )
               }
               className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform w-full"
@@ -854,7 +921,7 @@ export default function RepoPage({params}: {params: any}) {
                 <span>Transfer ownership</span>
               </button>
             )}
-            {isOwner && (
+            {false && (
               <div
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
                 onClick={() => connectGitGate()}
@@ -870,13 +937,15 @@ export default function RepoPage({params}: {params: any}) {
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">
               <span>Requirements</span>
-              <PlusCircleIcon
+              {/*
+                  <PlusCircleIcon
                 className="h-6 w-6 cursor-pointer select-none mb-0.5"
                 onClick={() => {
                   setBlacklistOpen(false);
                   setOpen(true);
                 }}
               />
+                */}
             </h3>
             {repository.requirements.length === 0 && (
               <p className="mt-2 text-gray-300">No token requirement!</p>
@@ -917,13 +986,13 @@ export default function RepoPage({params}: {params: any}) {
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">
               <span>Blacklist</span>
-              <PlusCircleIcon
+              {/* <PlusCircleIcon
                 className="h-6 w-6 cursor-pointer select-none mb-0.5"
                 onClick={() => {
                   setOpen(false);
                   setBlacklistOpen(true);
                 }}
-              />
+              />*/}
             </h3>
             {repository.blacklistedAddresses.filter(
               (address: string) => address !== ""
@@ -965,7 +1034,7 @@ export default function RepoPage({params}: {params: any}) {
         </div>
       </div>
 
-      <NewRequirementSlide
+      {/* <NewRequirementSlide
         open={open}
         setOpen={setOpen}
         submitRequirement={(requirement) => addNewRequirement(requirement)}
@@ -974,7 +1043,7 @@ export default function RepoPage({params}: {params: any}) {
         open={blacklistOpen}
         setOpen={setBlacklistOpen}
         submitBlacklist={(blacklist) => console.log(blacklist)}
-      />
+      /> */}
     </div>
   );
 }
