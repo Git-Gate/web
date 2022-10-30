@@ -140,11 +140,11 @@ class CreateTokenizedRepositoryHandler {
     );
     const metadataCid = await client.store({
       name: repositoryName,
-      description: `Soulbound Proof of Github Membership (POGM) for ${repositoryName} GitHub repository.\n\n${repo.url}`,
+      description: `Soulbound Proof of Github Membership (POGM) for ${repositoryName} GitHub repository.\n\n${repo.html_url}`,
       image: imageFile,
       attributes: {
         Name: repositoryName,
-        Url: repo.url,
+        Url: repo.html_url,
       },
     });
     const originalUserAddress = ethers.utils.getAddress(user.address);
