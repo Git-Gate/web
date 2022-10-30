@@ -20,10 +20,13 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   const [notReady, setNotReady] = useState(false);
 
   useEffect(() => {
-    if (account.address && !repo) {
+    if (!repo) {
       getRepo();
-      step === 0 && setStep(1);
     }
+  }, []);
+
+  useEffect(() => {
+    if (account.address && step === 0) setStep(1);
   }, [account]);
 
   useEffect(() => {
