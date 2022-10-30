@@ -65,6 +65,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   };
 
   const onGithubLoginSuccess = async (response: any) => {
+    console.log(response);
     if (
       typeof window !== "undefined" &&
       localStorage.getItem("gitgate_token")
@@ -158,7 +159,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               clientId="3cab64e37e3e051e028a"
               redirectUri={
                 typeof window !== "undefined" &&
-                `https://web-gitgate.vercel.app/invite/repo?repoId=${repo._id}`
+                `https://web-gitgate.vercel.app/login/github?repoId=${repo._id}`
               }
               scope="user"
             >

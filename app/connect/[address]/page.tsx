@@ -83,6 +83,10 @@ export default function Connect() {
             onSuccess={(response: any) => onGithubLoginSuccess(response)}
             onError={(response: any) => onGithubLoginError(response)}
             clientId="3cab64e37e3e051e028a"
+            redirectUri={
+              typeof window !== "undefined" &&
+              `https://web-gitgate.vercel.app/login/github`
+            }
             scope="user"
           />
         </div>
