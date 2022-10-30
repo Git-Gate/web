@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import {RepositoryModel} from "./models/repository";
 import {onRepositoryCreate} from "./hooks/onRepositoryCreate";
+import {onRepositoryUpdate} from "./hooks/onRepositoryUpdate";
 
 export async function connect(): Promise<void> {
   if (mongoose?.connection?.db) {
@@ -16,4 +17,11 @@ export async function connect(): Promise<void> {
       },
     },
   ]).on("change", onRepositoryCreate);
+  RepositoryModel.watch([
+    {
+      $match: {
+        operationType: "update",
+      },
+    },
+  ]).on("change", onRepositoryUpdate);
 }
