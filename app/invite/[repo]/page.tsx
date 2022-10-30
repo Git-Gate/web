@@ -189,7 +189,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               clientId="3cab64e37e3e051e028a"
               redirectUri={
                 typeof window !== "undefined" &&
-                `http://localhost:3000/login/github?repoId=${repo._id}`
+                `https:///web-gitgate.vercel.app/login/github?repoId=${repo._id}`
               }
               scope="user"
             >
