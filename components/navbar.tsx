@@ -123,7 +123,7 @@ export default function Navbar() {
               Search
             </h5>
             <Link
-              href="https://seasoned-eocursor-e4d.notion.site/Smart-Contract-doc-e76b97c8d9f04e0ca01e766509d588f6"
+              href="https://seasoned-eocursor-e4d.notion.site/GitGate-7d44be6498344837bf77f1d9e33d308a"
               target={"_blank"}
             >
               <h5 className="text-sm md:text-lg cursor-pointer hover:underline">

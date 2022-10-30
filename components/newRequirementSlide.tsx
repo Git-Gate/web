@@ -2,6 +2,7 @@ import {Fragment, useState} from "react";
 import {Dialog, Transition} from "@headlessui/react";
 import {XMarkIcon} from "@heroicons/react/24/outline";
 import {QuestionMarkCircleIcon} from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 const defaultRequirement = {
   type: "ERC-20",
@@ -257,8 +258,9 @@ export default function NewRequirementSlide({
                           </div>
                           <div className="pt-4 pb-6">
                             <div className="flex text-sm">
-                              <a
-                                href="#"
+                              <Link
+                                href="https://seasoned-eocursor-e4d.notion.site/Registry-d7df5f6567804e1db1bdf173f28720bf#ade29fea7899410dbb0041a125753ead"
+                                target={"_blank"}
                                 className="group inline-flex items-center text-gray-500 hover:text-gray-900"
                               >
                                 <QuestionMarkCircleIcon
@@ -268,7 +270,7 @@ export default function NewRequirementSlide({
                                 <span className="ml-2">
                                   Learn more about requirements
                                 </span>
-                              </a>
+                              </Link>
                             </div>
                           </div>
                         </div>
