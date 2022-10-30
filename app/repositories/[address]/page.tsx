@@ -93,7 +93,7 @@ export default function RepoPage({params}: {params: any}) {
               type="button"
               onClick={() =>
                 navigator.clipboard.writeText(
-                  `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
+                  `https://web-gitgate.vercel.app/invite?repoId=${repository._id}`
                 )
               }
               className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:scale-105 transition-transform w-full"
@@ -106,7 +106,7 @@ export default function RepoPage({params}: {params: any}) {
                 type="button"
                 onClick={() =>
                   navigator.clipboard.writeText(
-                    `https://web-gitgate.vercel.app/repositories/${repository._id}/invite`
+                    `https://web-gitgate.vercel.app/repositories?repoId=${repository._id}`
                   )
                 }
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full"

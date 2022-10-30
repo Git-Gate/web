@@ -31,7 +31,8 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   }, [searchParams]);
 
   const getRepo = async () => {
-    const repoRes = await axios.get(`/api/repositories/${params.address}`);
+    const repoId = searchParams.get("repoId");
+    const repoRes = await axios.get(`/api/repositories/${repoId}`);
     setRepo(repoRes.data);
     if (!repoRes.data.soulboundNFTContractAddress) {
       setNotReady(true);
@@ -157,7 +158,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               clientId="3cab64e37e3e051e028a"
               redirectUri={
                 typeof window !== "undefined" &&
-                `https://web-gitgate.vercel.app/repositories/${repo._id}/invite`
+                `https://web-gitgate.vercel.app/invite?repoId=${repo._id}`
               }
               scope="user"
             >
