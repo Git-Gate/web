@@ -106,7 +106,7 @@ export default function Navbar() {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full py-4 px-8 transition-colors ${
+      className={`fixed top-0 left-0 w-full py-4 px-4 md:px8 transition-colors ${
         !changeColor ? "bg-transparent" : "bg-black"
       } z-30`}
     >
