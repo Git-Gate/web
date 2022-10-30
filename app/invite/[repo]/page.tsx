@@ -7,6 +7,7 @@ import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import LoginGithub from "react-login-github";
 import {toast} from "react-toastify";
+import {shortenHex} from "../../../utils";
 
 export default function InviteRepoPage({params}: {params: {address: string}}) {
   const {account, isReady} = useAccount();
@@ -135,6 +136,35 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
             <h2 className="text-lg md:text-xl text-center text-gray-300 max-w-2xl z-20">
               Check if you are eligible for an invite
             </h2>
+            <div className="flex items-center justify-center space-x-2">
+              {repo.requirements.map((requirement: any) => {
+                if (requirement.type === "erc-20") {
+                  return (
+                    <Link
+                      href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                      target={"_blank"}
+                    >
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                        Amount: {requirement.amount} -{" "}
+                        {shortenHex(requirement.address)}
+                      </span>
+                    </Link>
+                  );
+                }
+                return (
+                  <Link
+                    href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
+                    target={"_blank"}
+                  >
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                      Amount: {requirement.amount} - IDs:{" "}
+                      {requirement.ids.join(", ")} -
+                      {shortenHex(requirement.address)}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
             <button
               onClick={() => checkEligibility()}
               className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -159,7 +189,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               clientId="3cab64e37e3e051e028a"
               redirectUri={
                 typeof window !== "undefined" &&
-                `https://web-gitgate.vercel.app/login/github?repoId=${repo._id}`
+                `http://localhost:3000/login/github?repoId=${repo._id}`
               }
               scope="user"
             >
@@ -197,7 +227,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
   return (
     <div className="h-screen max-w-3xl mx-auto flex flex-col items-center justify-center space-y-4">
       <h1 className="text-3xl md:text-5xl text-center font-extrabold z-20">
-        <p>🦄</p>
+        <p className="animate-bounce">🦄</p>
         <p className="mt-4">
           Get access to the{" "}
           <Link

@@ -215,10 +215,14 @@ class CreateTokenizedRepositoryHandler {
     @Query("ownerAddress") ownerAddress: string,
     @Query("name") name: string,
     @Query("memberAddress") memberAddress: string,
+    @Query("text") text: string,
     @Query("page") page: number,
     @Query("limit") limit: number
   ) {
     const findObj: any = {};
+    if (text) {
+      findObj["$text"] = {$search: text};
+    }
     if (ownerAddress) {
       findObj["ownerAddress"] = ownerAddress.toLowerCase();
     }
