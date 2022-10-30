@@ -12,7 +12,7 @@ export default function Home() {
         animate={{opacity: 1, scale: 1}}
         transition={{duration: 1}}
         viewport={{once: true}}
-        className="max-w-4xl flex flex-col items-center justify-center py-16 space-y-8 h-screen px-8 md:px-4 z-20 relative"
+        className="max-w-5xl flex flex-col items-center justify-center py-16 space-y-8 h-screen px-8 md:px-4 z-20 relative"
       >
         <motion.img
           initial={{opacity: 0}}
@@ -23,12 +23,11 @@ export default function Home() {
           viewport={{once: true}}
         />
         <h1 className="text-4xl md:text-6xl text-center font-extrabold z-20">
-          <p>The home for</p>
-          <p>decentralized repo access control</p>
+          <p>Unlock token-gating & access controls for GitHub repositories</p>
         </h1>
-        <h2 className="text-xl md:text-2xl text-center text-gray-300 max-w-2xl z-20">
-          Token-gate your Github repositories and create Soulbound ERC721Vote
-          tokens to govern them.
+        <h2 className="text-xl md:text-4xl text-center text-gray-300 max-w-3xl z-20">
+          Easily embed a DAO within your repository through Soulbound membership
+          tokens.
         </h2>
         <a
           href="#explore"
@@ -52,8 +51,8 @@ export default function Home() {
               On-chain requirements verification
             </h1>
             <h2 className="text-xl md:text-2xl text-center text-gray-700 max-w-2xl z-20">
-              Define the tokens needed to access your repositories and grant
-              roles based on on-chain data.
+              Define the tokens needed to access your repositories and invite
+              collaborators based on on-chain requirements.
             </h2>
             <Link
               href="https://seasoned-eocursor-e4d.notion.site/Registry-d7df5f6567804e1db1bdf173f28720bf"
@@ -87,7 +86,7 @@ export default function Home() {
               Reward your devs
             </h1>
             <h2 className="text-xl md:text-2xl text-center text-gray-300 max-w-2xl z-20">
-              A Soulbound ERC721Vote for your contributors to explore new
+              A Soulbound ERC721Votes token for your contributors to explore new
               governance horizons.
             </h2>
             <Link
