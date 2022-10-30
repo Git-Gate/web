@@ -766,6 +766,8 @@ export default function RepoPage({params}: {params: any}) {
     if (account.address && !repository && !error) getRepository();
   }, [account]);
 
+  const addNewRequirement = async (requirement: any) => {};
+
   const getRepository = async () => {
     setLoading(true);
     try {
@@ -966,7 +968,7 @@ export default function RepoPage({params}: {params: any}) {
       <NewRequirementSlide
         open={open}
         setOpen={setOpen}
-        submitRequirement={(requirement) => console.log(requirement)}
+        submitRequirement={(requirement) => addNewRequirement(requirement)}
       />
       <NewBlacklistSlide
         open={blacklistOpen}
