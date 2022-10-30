@@ -53,7 +53,7 @@ export default function Profile({params}: {params: {address: string}}) {
         userRes.data.address.toLowerCase() === account.address.toLowerCase()
       );
       const repositoriesRes = await axios.get(
-        `/api/repositories?memberAddress=${userRes.data.address}`
+        `/api/repositories?walletAddress=${userRes.data.address}`
       );
       setRepositories(repositoriesRes.data);
       setLoading(false);
