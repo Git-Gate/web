@@ -158,7 +158,7 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               clientId="3cab64e37e3e051e028a"
               redirectUri={
                 typeof window !== "undefined" &&
-                `https://web-gitgate.vercel.app/invite?repoId=${repo._id}`
+                `https://web-gitgate.vercel.app/invite/repo?repoId=${repo._id}`
               }
               scope="user"
             >
