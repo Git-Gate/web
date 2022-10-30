@@ -137,14 +137,15 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               Check if you are eligible for an invite
             </h2>
             <div className="flex items-center justify-center space-x-2">
-              {repo.requirements.map((requirement: any) => {
+              {/* repo.requirements.map((requirement: any, index: number) => {
                 if (requirement.type === "erc-20") {
                   return (
                     <Link
+                      key={`${requirement.address}_${index}`}
                       href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
                       target={"_blank"}
                     >
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                      <span className="inline-flex text-center items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
                         Amount: {requirement.amount} -{" "}
                         {shortenHex(requirement.address)}
                       </span>
@@ -156,14 +157,14 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
                     href={`https://mumbai.polygonscan.com/token/${requirement.address}`}
                     target={"_blank"}
                   >
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
+                    <span className="inline-flex items-center text-center rounded-full bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-800 transition-transform hover:scale-105">
                       Amount: {requirement.amount} - IDs:{" "}
                       {requirement.ids.join(", ")} -
                       {shortenHex(requirement.address)}
                     </span>
                   </Link>
                 );
-              })}
+              })*/}
             </div>
             <button
               onClick={() => checkEligibility()}
@@ -193,9 +194,9 @@ export default function InviteRepoPage({params}: {params: {address: string}}) {
               }
               scope="user"
             >
-              <button className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              <div className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 Connect Github
-              </button>
+              </div>
             </LoginGithub>
           </div>
         );

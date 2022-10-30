@@ -5,7 +5,7 @@ import {
   ClipboardDocumentIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
-import {useAccount} from "@web3modal/react";
+import {useAccount, useContract} from "@web3modal/react";
 import axios from "axios";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -15,8 +15,745 @@ import NewRequirementSlide from "../../../components/newRequirementSlide";
 import RepoImage from "../../../components/repoImage";
 import {shortenHex} from "../../../utils";
 
+const registryABI = [
+  {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "githubRepoId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "wallet",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "role",
+        type: "uint256",
+      },
+    ],
+    name: "AccessDenied",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "message",
+        type: "string",
+      },
+    ],
+    name: "GeneralError",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "RepositoryAlreadyExists",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "RepositoryNotExists",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "WrongSignerAddress",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_addr",
+        type: "address",
+      },
+    ],
+    name: "BlacklistedAddressCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "RepositoryCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "RequirementsChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "previousAdminRole",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "newAdminRole",
+        type: "bytes32",
+      },
+    ],
+    name: "RoleAdminChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newOperator",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "role",
+        type: "uint256",
+      },
+    ],
+    name: "RoleChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "RoleGranted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "RoleRevoked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "soulboundContract",
+        type: "address",
+      },
+    ],
+    name: "SoulboundCreated",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "BLACKLIST_ADMINISTRATOR",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "DEFAULT_ADMIN_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "NFT_FACTORY_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "REPOSITORY_OWNER",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "REQUIREMENTS_ADMINISTRATOR",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_githubRepoId",
+        type: "uint256",
+      },
+      {
+        internalType: "address[]",
+        name: "_collections",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_ids",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_amounts",
+        type: "uint256[]",
+      },
+    ],
+    name: "changeRequirements",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "checkUserRequirements",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "authorized",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "githubRepoId",
+            type: "uint256",
+          },
+          {
+            internalType: "address[]",
+            name: "operators",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "op",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address[]",
+            name: "blacklistedAddresses",
+            type: "address[]",
+          },
+          {
+            internalType: "address[]",
+            name: "collections",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "ids",
+            type: "uint256[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "amounts",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address",
+            name: "soulBoundTokenContract",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "tokenizedRepoName",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "soulboundBaseURI",
+            type: "string",
+          },
+        ],
+        internalType: "struct POGMRegistry.RepositoryRequirements",
+        name: "newRepo",
+        type: "tuple",
+      },
+      {
+        internalType: "bytes32",
+        name: "hashedMessage",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
+      },
+    ],
+    name: "createTokenizedRepo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "database",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "githubRepoId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "soulBoundTokenContract",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "tokenizedRepoName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "soulboundBaseURI",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "getBlacklistedAddresses",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+    ],
+    name: "getRoleAdmin",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "getSoulBoundBaseURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "repoId",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenizedRepoName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tokenizedRepoId",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenizedRepoOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "grantRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "hasRole",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "renounceRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "revokeRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_addresses",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256",
+        name: "_githubRepoId",
+        type: "uint256",
+      },
+    ],
+    name: "setBlacklistedAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_factory",
+        type: "address",
+      },
+    ],
+    name: "setFactory",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_repoId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_soulboundContract",
+        type: "address",
+      },
+    ],
+    name: "setSoulboundAfterCreation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
+      },
+    ],
+    name: "supportsInterface",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_githubRepoId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_op",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_newValue",
+        type: "address",
+      },
+    ],
+    name: "transferRole",
+    outputs: [
+      {
+        internalType: "address",
+        name: "oldValue",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
+
 export default function RepoPage({params}: {params: any}) {
   const {account} = useAccount();
+  const {contract} = useContract({
+    abi: registryABI,
+    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as string,
+  });
   const [isOwner, setIsOwner] = useState(false);
   const [repository, setRepository] = useState<any>(null);
   const [error, setError] = useState(false);
