@@ -31,7 +31,10 @@ import {JwtAuthGuard} from "../../../lib/middlewares";
 import {User} from "../../../lib/db/interfaces/user";
 import {GithubClient} from "../../../lib/github-client";
 import {getSvg} from "../../../utils";
-import {registryContractAbi} from "../../../lib/smart-contract-abis";
+import {
+  registryContractAbi,
+  soulboundFactoryContractAbi,
+} from "../../../lib/smart-contract-abis";
 
 export class CreateTokenizedRepositoryDTO {
   @IsString()
@@ -191,21 +194,52 @@ class CreateTokenizedRepositoryHandler {
       );
     }
 
-    return await RepositoryModel.create({
-      name: repo.name,
-      description: repo.description,
-      githubUrl: repo.url,
-      githubId: repo.id,
-      githubOwner: repositoryOwner,
-      ownerAddress: user.address,
-      memberAddresses: [],
-      requirements: requirements.map((r) => ({
-        ...r,
-        address: r.address.toLowerCase(),
-      })),
-      blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
-      metadataIpfsHash: metadataCid.ipnft,
-    });
+    const POGMFactoryContract = await sdk.getContract(
+      process.env.POGM_CONTRACT_ADDRESS as string,
+      soulboundFactoryContractAbi
+    );
+    POGMFactoryContract.interceptor.overrideNextTransaction(() => ({
+      gasLimit: 3000000,
+    }));
+    console.log("Contract ready! Now calling factory method...");
+    try {
+      const address = await POGMFactoryContract.call(
+        "createPOGMToken",
+        repo.id
+      );
+      console.log("Soulbound NFT Contract created");
+      const soulboundCreatedLog = address.receipt.logs.filter(
+        (log: {topics: string | string[]}) =>
+          log.topics.includes(
+            "0x23847815b902fbcb47b7d2eb0ca3429eac0c5d38155efaa188a5a36c5f9e802d"
+          )
+      );
+      const abi = [
+        "event SoulboundCreated(uint256 repoId, address soulboundContract)",
+      ];
+      const iface = new ethers.utils.Interface(abi);
+      const p = iface.parseLog(soulboundCreatedLog[0]);
+      const soulboundContractAddress = p.args.soulboundContract;
+      return await RepositoryModel.create({
+        name: repo.name,
+        description: repo.description,
+        githubUrl: repo.url,
+        githubId: repo.id,
+        githubOwner: repositoryOwner,
+        ownerAddress: user.address,
+        memberAddresses: [],
+        requirements: requirements.map((r) => ({
+          ...r,
+          address: r.address.toLowerCase(),
+        })),
+        blacklistedAddresses: blacklistedAddresses.map((a) => a.toLowerCase()),
+        metadataIpfsHash: metadataCid.ipnft,
+        soulboundNFTContractAddress: soulboundContractAddress,
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error("Error while calling POGM SoulboundNFT Contract Factory");
+    }
   }
 
   @Get()
