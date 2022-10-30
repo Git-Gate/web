@@ -4,7 +4,7 @@ import {useConnectModal, useAccount, useSignMessage} from "@web3modal/react";
 import {useEffect, useState} from "react";
 import Link from "next/link";
 import axios from "axios";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import useKeyboardShortcut from "use-keyboard-shortcut";
 import SearchModal from "./searchModal";
 import {isFlask, shortenHex} from "../utils";
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [showSearch, setShowSearch] = useState(false);
   const {signMessage} = useSignMessage({message: ""});
   const {push} = useRouter();
+  const searchParams = useSearchParams();
   const [changeColor, setChangeColor] = useState(false);
   const {flushHeldKeys: _} = useKeyboardShortcut(
     ["Control", "F"],
@@ -25,6 +26,8 @@ export default function Navbar() {
       repeatOnHold: false,
     }
   );
+
+  console.log(searchParams);
 
   const connectWallet = () => {
     if (!isOpen) open();
@@ -50,6 +53,7 @@ export default function Navbar() {
 
   const signUp = async () => {
     try {
+      if (searchParams.get("repoId")) return;
       if (
         typeof window !== undefined &&
         !localStorage.getItem("gitgate_token")
