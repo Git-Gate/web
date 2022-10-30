@@ -24,7 +24,7 @@ There is an off-chain database part that uses MongoDB where the application stor
 
 To manage Github repository invitations GitGate uses a Github App that needs to be installed on the repositories to be tokenized through which GitGate can invite new contributors.
 
-GitGate uses Thirdweb to facilitate the interaction with smart contracts. All other smart contracts are written in Solidity with the Hardhat framework. 
+GitGate uses Thirdweb to facilitate the interaction with NFT smart contracts. All other smart contracts are written in Solidity with the Hardhat framework. 
 For Metadata hosting it is used NFT.storage to upload data on IPFS.
 
 Infura is used for ENS resolution from an address. The API REST use a call authentication strategy related to JWT.
