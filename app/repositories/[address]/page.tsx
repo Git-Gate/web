@@ -888,7 +888,7 @@ export default function RepoPage({params}: {params: any}) {
   return (
     <div className="relative">
       <div className="relative inset-0 w-full min-h-screen md:fixed md:w-4/12 bg-indigo-500">
-        <div className="flex flex-col items-center space-y-4 py-36 px-4">
+        <div className="flex flex-col items-center justify-center min-h-screen space-y-4 py-36 px-4">
           <RepoImage name={repository.name} className="h-64 w-64 rounded-lg" />
           <div className="flex flex-col items-center space-y-4">
             <h1 className="text-4xl font-bold">{repository.name}</h1>
@@ -929,10 +929,16 @@ export default function RepoPage({params}: {params: any}) {
                 Connect GitGate
               </div>
             )}
+            <a
+              href="#requirements"
+              className="block md:hidden mt-24 hover:underline animate-pulse cursor-pointer"
+            >
+              View requirements
+            </a>
           </div>
         </div>
       </div>
-      <div className="w-full ml-auto md:w-8/12">
+      <div id="requirements" className="w-full ml-auto md:w-8/12">
         <div className="flex flex-col items-start justify-center space-y-8 h-screen bg-black py-24 md:py-36 px-8 text-white">
           <div className="flex flex-col">
             <h3 className="text-xl font-semibold flex items-center space-x-4">

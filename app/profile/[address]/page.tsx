@@ -96,7 +96,7 @@ export default function Profile({params}: {params: {address: string}}) {
           </Link>
           <a
             href="#repos"
-            className="mt-24 hover:underline animate-pulse cursor-pointer"
+            className="block md:hidden mt-24 hover:underline animate-pulse cursor-pointer"
           >
             View repositories
           </a>
